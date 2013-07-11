@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load tags %}
+{% block title %}
+    {{ item|capfirst }} | vincis
+{% endblock %}
+{% block content %}
+    <h2>Contenido marcado con <a href="/etiqueta/{{ tag }}">{{ tag }}</a></h2>
+    <div role="main">
+        {% for article in articles %}
+            <article role="article" itemscope itemtype="http://schema.org/Article">
+                <div class="title">
+                    <h3 itemprop="name"><a href="{{ article.url }}">{{ article.title|capfirst }}</a></h3>
+                    <time itemprop="dateCreated" datetime="{{ article.pub_date|date:"Y-m-d" }}">
+                        {{ article.pub_date|date:"d F Y"}}
+                    </time>
+                </div>
+                <summary itemprop="review">
+                    {{ article.summary }}
+                </summary>
+                <footer id="tags" role="contentinfo" itemprop="keywords">
+                    <h5>Etiquetas: </h5>
+                    <ul>
+                        {% tags article.tags.all %}
+                    </ul>
+                </footer>
+            </article>
+        {% endfor %}
+        <div class="pagination">
+        <ul>
+            {% for page in pages %}
+                {% if page == articles.number %}
+                    <li><a class="selected" href="?{{ page }}">{{ page }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ page }}">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

@@ -1,0 +1,126 @@
+from django.db import models
+from django.contrib import admin
+from django.utils.translation import ugettext as _
+from django.forms import ModelForm
+from django.conf import settings
+from unidecode import unidecode
+import logging
+
+logger = logging.getLogger('vincis.console')
+
+
+class Tag(models.Model):
+    item = models.CharField(max_length=200, verbose_name=_('item'))
+
+    def __unicode__(self):
+        return self.item
+
+    class Meta():
+        verbose_name = _("tag")
+        verbose_name_plural = _("tags")
+
+
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('item',)
+
+
+class Page(models.Model):
+    title = models.CharField(unique=True, max_length=200, verbose_name=_('title'))
+    pub_date = models.DateField(auto_now_add=True, verbose_name=_('publishing date'))
+    summary = models.TextField(verbose_name=_('summary'))
+    tags = models.ManyToManyField(Tag, verbose_name=_('tags'))
+    url = models.URLField(blank=True)
+
+    def modified_title(self, title):
+        logger.critical(title)
+        title = title.lower()
+        title = "-".join(title.split(" "))
+        title = unidecode(title)
+        logger.critical(title)
+        return title
+
+    class Meta():
+        verbose_name = _("page")
+        verbose_name_plural = _("pages")
+
+
+class Tech(Page):
+    toc = models.TextField(verbose_name=_("table of contents"))
+    content = models.TextField(verbose_name=_("content"))
+    others = models.ManyToManyField('self', blank=True, verbose_name=_("other tecnical articles"))
+
+    def __unicode__(self):
+        return '{} en {}'.format(self.title, self.url)
+
+    class Meta():
+        verbose_name = _("technicality")
+        verbose_name_plural = _("technicalities")
+
+
+class TechForm(ModelForm):
+    class Meta:
+        model = Tech
+    
+    def __init__(self, *args, **kwargs):
+        super(TechForm, self).__init__(*args, **kwargs)
+        self.fields['url'].initial = settings.LOCALHOST + "/tecnicismo/"
+
+
+class TechnicalityAdmin(admin.ModelAdmin):
+    fields = ('title', 'summary', 'toc', 'content', 'tags', 'url', 'others')
+    list_display = ('title', 'pub_date', 'url')
+    form = TechForm
+
+    def save_model(self, request, model, form, changed):
+        if (model.url == settings.LOCALHOST + "/tecnicismo/"):
+            resource = model.modified_title(model.title)
+            model.url += resource
+        elif (model.url == ""):
+            resource = model.modified_title(model.title)
+            model.url += settings.LOCALHOST + "/tecnicismo/" + resource
+        else:
+            model.url = model.modified_title(model.url)
+        model.save()
+
+
+class Article(Page):
+    content = models.TextField()
+
+    def __unicode__(self):
+        return '{} en {}'.format(self.title, self.url)
+
+    class Meta:
+        verbose_name = _("article")
+        verbose_name_plural = _("articles")
+
+
+class ArticleForm(ModelForm):
+    class Meta:
+        model = Article
+    
+    def __init__(self, *args, **kwargs):
+        super(ArticleForm, self).__init__(*args, **kwargs)
+        self.fields['url'].initial = settings.LOCALHOST + "/articulo/"
+
+
+class ArticleAdmin(admin.ModelAdmin):
+    fields = ('title', 'summary', 'content', 'tags', 'url')
+    content = models.TextField(verbose_name=_("content"))
+    list_display = ('title', 'pub_date', 'url')
+    form = ArticleForm
+
+    def save_model(self, request, model, form, changed):
+        if (model.url == settings.LOCALHOST + "/articulo/"):
+            resource = model.modified_title(model.title)
+            model.url += resource
+        elif (model.url == ""):
+            resource = model.modified_title(model.title)
+            model.url += settings.LOCALHOST + "/articulo/" + resource
+        else:
+            model.url = model.modified_title(model.url)
+        model.save()
+
+
+admin.site.register(Tech, TechnicalityAdmin)
+admin.site.register(Article, ArticleAdmin)
+admin.site.register(Tag, TagAdmin)

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <title>{% block title %} Vincis {% endblock %}</title>
+        <meta charset="utf-8">
+        <!--<link rel="stylesheet" href="css/GGS.css">-->
+        <link rel="stylesheet" href="/static/css/normalize.css">
+        <link rel="stylesheet" href="/static/css/base.css">
+        <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,300' rel='stylesheet' type='text/css'>
+        <script>{% block script %}{% endblock %}</script>
+        <style type="text/css">
+        	{% block style %}{% endblock %}
+        </style>
+    </head>
+    <body>
+    {% block navigation %}
+	    <div role="navigation">
+	        <ul>
+	            <li><a href="/"><i class="icon-home"></i></a></li>
+	            <li><a href="/informes">Informes</a></li>
+	            <li><a href="/tecnicismos">Tecnicismos</a></li>
+	            <li><a href="/articulos">Artículos</a></li>
+	            <li role="search"><a href=""><input type="text" value="Buscar"><i style="padding-left: 5px;" class="icon-search"></i></a></li>
+	        </ul>
+	    </div>
+    {% endblock %}
+    <div class="wrapper">
+        <div id="header">
+            <div class="contact">
+                <ul>
+                    <li><a href=""><i class="icon-envelope"></i></a></li>
+                    <li><a href="https://twitter.com/vinc1s"><i class="icon-twitter"></i></a></li>
+                    <li><a href=""><i class="icon-rss"></i></a></li>
+                </ul>
+            </div>
+            <a role="banner" href="">
+                <canvas id="logo" width=450 height=150>
+                    <h1>Vincis</h1>
+                </canvas>
+            </a>
+        </div>
+        {% block content %}{% endblock %}
+        <div class="footer">
+            <img id="powered" src="/static/images/powered.png" />
+            <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.es_ES">
+                <img alt="Licencia de Creative Commons" src="http://i.creativecommons.org/l/by-sa/3.0/88x31.png" />
+                <span>Creative Commons Reconocimiento y Compartir Igual 3.0 Unported</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="overlay hidden"></div>
+    <form method="post" action="" class="pop-up hidden">
+        <input placeholder="Título del correo">
+        <textarea rows=8 placeholder="Contenido del correo"></textarea>
+        <button type="submit">Enviar correo</button>
+    </form>
+    <script src="/static/js/logo.js"></script>
+    <script src="/static/js/base.js"></script>
+    <!--<script src="js/GGS.js"></script>-->
+    </body>
+</html>

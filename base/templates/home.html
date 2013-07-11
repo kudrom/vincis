@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block style %}
+		.wrapper div{
+			margin: 25px 0;
+		}
+
+		.wrapper h2{
+			margin-bottom: 15px;
+		}
+
+		#sendMail{
+			margin-top: 10px;
+		}
+
+		#sendMail input, #sendMail textarea{
+			width: 100%;
+			display: block;
+		}
+		
+		@media all and (min-width: 1024px){
+			#sendMail input, #sendMail textarea{
+        		width: 90%;
+        	}
+        }
+        
+        @media all and (min-width: 1280px){
+		    .wrapper{
+		        width: 70%;
+		    }
+		
+		    #sendMail input, #sendMail textarea{
+		        width: 85%;
+		    }
+		}
+		
+		@media all and (min-width: 1700px){
+			#sendMail input, #sendMail textarea{
+        		width: 75%;
+        	}
+    	}
+    }
+{% endblock %}
+{% block navigation %}
+        <div role="navigation">
+            <ul>
+                <li><a href="/" class="selected"><i class="icon-home"></i></a></li>
+                <li><a href="/informes">Informes</a></li>
+                <li><a href="/tecnicismos">Tecnicismos</a></li>
+                <li><a href="/articulos">Artículos</a></li>
+                <li role="search"><a href=""><input type="text" value="Buscar"><i style="padding-left: 5px;" class="icon-search"></i></a></li>
+            </ul>
+        </div>
+    {% endblock %}
+{% block content %}
+	<div role="main" itemscope itemtype="http://schema.org/Article">
+	    <div id="what">
+	        <h2>¿Dónde estás?</h2>
+	        <p>En vincis, un lugar del ciberespacio que recoge gran parte de lo que he escrito, tanto código como artículos o relatos, y que me he tomado la libertad de agrupar en tres conjuntos:</p>
+	        <ul>
+	            <li><a>Informes</a>: abordan cuestiones de actualidad desde la perspectiva de un <a>ciudadano</a> y no la de un hipotético "periodista", politólogo o letrado.</li>
+	            <li><a>Tecnicismos</a>: engloban los artículos técnicos que he escrito; muchos de ellos guardan estrecha relación con los informes ya que intentan explicar su implementación para ofrecer la perspectiva del desarrollador sobre cada  informe. Se advierte que el contenido es solo apto para desarrolladores.</li>
+	            <li><a>Artículos</a>: recogen cualquier cosa que se me pase por la cabeza y no exija que ames u odies python para comprenderlo.</li>
+	        </ul>
+	    </div>
+	    <div id="who">
+	        <h2>¿Quién soy?</h2>
+	        <p>¿Acaso importa? No me <a>malinterpretes</a>, soy un desarrollador software y ciudadano sensibilizado; la edad, nacionalidad, nombre, sexo o peinado permite que me los reserve, no creo que aporten nada nuevo.</p>
+	        <p>Imagíname como más te convenga para disfrutar al máximo de lo que escribo, pero procura no obsesionarte con la máscara que voluntariamente exhibo.</p>
+	    </div>
+	    <div id="where">
+	        <h2>¿Dónde puedes encontrarme?</h2>
+	        <p>En vincis, participando en la sección de comentarios con aportaciones constructivas que promuevan el debate.</p>
+	        <p>Puedes <a href="">tuitear</a>, pero no prometo responder. Si quieres contarme confidencias puedes hacerlo enviándome un correo:</p>
+	        <form id="sendMail" method="post" action="">
+	            <input placeholder="Título del correo">
+	            <textarea rows=8 placeholder="Contenido del correo"></textarea>
+	            <button type="submit">Enviar correo</button>
+	        </form>
+	    </div>
+	</div>
+{% endblock %}

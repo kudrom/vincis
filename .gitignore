@@ -1,0 +1,5 @@
+vincis/local_settings.py
+dev.db
+debug.log
+*.pyc
+__pycache__
