@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from base.models import Page, Tech, Article, Tag
+from base.models import Page, Tech, Article, Tag, modified_title
 from report.models import Report
 from django.views.defaults import page_not_found
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -53,9 +53,10 @@ def section(request, section):
     else:
         return page_not_found(request)
     
-def tags(request, item):
+def tags(request, title):
     """ Function view for the tag pages """
-    tag = get_object_or_404(Tag, item=item)
+    url = settings.LOCALHOST + "/etiqueta/" + modified_title(title)
+    tag = get_object_or_404(Tag, url=url)
     object_list = Page.objects.filter(tags=tag)
     articles, pages = add_paginator(object_list, request)
-    return render(request, 'etiqueta.html', {'articles': articles, 'tag': item, "pages": pages})
+    return render(request, 'tags.html', {'articles': articles, 'tag': title, "pages": pages})

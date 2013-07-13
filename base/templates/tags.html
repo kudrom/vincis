@@ -1,0 +1,8 @@
+<footer id="tags" role="contentinfo" itemprop="keywords">
+    <h5>Etiquetas: </h5>
+    <ul>    
+		{% for tag in tags %}
+			<li><a href="{{ tag.url }}">{{ tag.title }}</a></li>
+		{% endfor %}
+    </ul>
+</footer>

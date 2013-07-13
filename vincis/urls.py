@@ -9,7 +9,7 @@ urlpatterns = patterns('',
 
     url(r'^$', TemplateView.as_view(template_name="home.html"), name='home'),
     url(r'^informe/([\w-]+)$', TemplateView.as_view(template_name="home.html")),
-    url(r'^etiqueta/(\w+)$', 'base.views.tags'),
+    url(r'^etiqueta/([\w-]+)$', 'base.views.tags'),
     url(r'^([\w]+)s$', 'base.views.section'),
     url(r'^([\w]+)/([\w-]+)$', 'base.views.story'),
 

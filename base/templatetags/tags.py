@@ -17,7 +17,7 @@ class TagNode(template.Node):
             tags = self.tags.resolve(context)
             text = ""
             for tag in tags:
-                text += '<li><a href="/etiqueta/{tag.item}">{tag.item}</a></li>'.format(tag=tag)
+                text += '<li><a href="{tag.url}">{tag.title}</a></li>'.format(tag=tag)
             return text
         except template.VariableDoesNotExist:
             return ''

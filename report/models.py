@@ -1,5 +1,5 @@
 from django.db import models
-from base.models import Page, Tech
+from base.models import Page, Tech, save_model
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 from django.conf import settings
@@ -33,12 +33,6 @@ class ReportAdmin(admin.ModelAdmin):
     form = ReportForm
 
     def save_model(self, request, model, form, changed):
-        if (model.url == settings.LOCALHOST + "/informe/"):
-            resource = model.modified_title(model.title)
-            model.url += resource
-        elif (model.url == ""):
-            resource = model.modified_title(model.title)
-            model.url += settings.LOCALHOST + "/informe/" + resource
-        model.save()
+        save_model(model, "/informe/")
 
 admin.site.register(Report, ReportAdmin)

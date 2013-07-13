@@ -8,12 +8,31 @@ import logging
 
 logger = logging.getLogger('vincis.console')
 
+# Modify the url of a model
+def modified_title(title):
+        title = title.lower()
+        title = "-".join(title.split(" "))
+        title = unidecode(title)
+        return title
+
+# Save a model reviewing the url
+def save_model(model, section):
+    if (model.url == settings.LOCALHOST + section):
+        resource = modified_title(model.title)
+        model.url += resource
+    elif (model.url == ""):
+        resource = modified_title(model.title)
+        model.url += settings.LOCALHOST + section + resource
+    else:
+        model.url = (model.url)
+    model.save()
 
 class Tag(models.Model):
-    item = models.CharField(max_length=200, verbose_name=_('item'))
+    title = models.CharField(max_length=200, verbose_name=_('item'), unique=True)
+    url = models.URLField(editable=False)
 
     def __unicode__(self):
-        return self.item
+        return self.title
 
     class Meta():
         verbose_name = _("tag")
@@ -21,7 +40,12 @@ class Tag(models.Model):
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('item',)
+    list_display = ('title',)
+    fields = ('title', ) 
+    
+    def save_model(self, request, model, form, changed):
+        model.url = settings.LOCALHOST + "/etiqueta/"+ modified_title(model.title)
+        model.save()
 
 
 class Page(models.Model):
@@ -30,14 +54,6 @@ class Page(models.Model):
     summary = models.TextField(verbose_name=_('summary'))
     tags = models.ManyToManyField(Tag, verbose_name=_('tags'))
     url = models.URLField(blank=True)
-
-    def modified_title(self, title):
-        logger.critical(title)
-        title = title.lower()
-        title = "-".join(title.split(" "))
-        title = unidecode(title)
-        logger.critical(title)
-        return title
 
     class Meta():
         verbose_name = _("page")
@@ -66,25 +82,17 @@ class TechForm(ModelForm):
         self.fields['url'].initial = settings.LOCALHOST + "/tecnicismo/"
 
 
-class TechnicalityAdmin(admin.ModelAdmin):
+class TechAdmin(admin.ModelAdmin):
     fields = ('title', 'summary', 'toc', 'content', 'tags', 'url', 'others')
     list_display = ('title', 'pub_date', 'url')
     form = TechForm
 
     def save_model(self, request, model, form, changed):
-        if (model.url == settings.LOCALHOST + "/tecnicismo/"):
-            resource = model.modified_title(model.title)
-            model.url += resource
-        elif (model.url == ""):
-            resource = model.modified_title(model.title)
-            model.url += settings.LOCALHOST + "/tecnicismo/" + resource
-        else:
-            model.url = model.modified_title(model.url)
-        model.save()
+        save_model(model, "/tecnicismo/")
 
 
 class Article(Page):
-    content = models.TextField()
+    content = models.TextField(verbose_name=_("content"))
 
     def __unicode__(self):
         return '{} en {}'.format(self.title, self.url)
@@ -105,22 +113,12 @@ class ArticleForm(ModelForm):
 
 class ArticleAdmin(admin.ModelAdmin):
     fields = ('title', 'summary', 'content', 'tags', 'url')
-    content = models.TextField(verbose_name=_("content"))
     list_display = ('title', 'pub_date', 'url')
     form = ArticleForm
 
     def save_model(self, request, model, form, changed):
-        if (model.url == settings.LOCALHOST + "/articulo/"):
-            resource = model.modified_title(model.title)
-            model.url += resource
-        elif (model.url == ""):
-            resource = model.modified_title(model.title)
-            model.url += settings.LOCALHOST + "/articulo/" + resource
-        else:
-            model.url = model.modified_title(model.url)
-        model.save()
+        save_model(model, "/articulo/")
 
-
-admin.site.register(Tech, TechnicalityAdmin)
+admin.site.register(Tech, TechAdmin)
 admin.site.register(Article, ArticleAdmin)
 admin.site.register(Tag, TagAdmin)

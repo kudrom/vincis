@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load tags %}
 {% block title %}
-    {{ item|capfirst }} | vincis
+    {{ tag }} | vincis
 {% endblock %}
 {% block content %}
     <h2>Contenido marcado con <a href="/etiqueta/{{ tag }}">{{ tag }}</a></h2>
