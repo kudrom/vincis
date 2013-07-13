@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load tags %}
 {% block style %}
 @media all and (min-width: 1280px){
     .wrapper{
@@ -11,17 +10,18 @@
     <div role="navigation">
         <ul>
             <li><a href="/"><i class="icon-home"></i></a></li>
-            <li><a href="/informes" class="{% if section == "informe" %}selected{% endif %}">Informes</a></li>
-            <li><a href="/tecnicismos" class="{% if section == "tecnicismo" %}selected{% endif %}">Tecnicismos</a></li>
-            <li><a href="/articulos" class="{% if section == "articulo" %}selected{% endif %}">Artículos</a></li>
+            <li><a href="/informes" class="{% if title == "informe" %}selected{% endif %}">Informes</a></li>
+            <li><a href="/tecnicismos" class="{% if title == "tecnicismo" %}selected{% endif %}">Tecnicismos</a></li>
+            <li><a href="/articulos" class="{% if title == "articulo" %}selected{% endif %}">Artículos</a></li>
             <li role="search"><a href=""><input type="text" value="Buscar"><i style="padding-left: 5px;" class="icon-search"></i></a></li>
         </ul>
     </div>
 {% endblock %}
 {% block title %}
-    {{ section|capfirst}} | Vincis
+    {{ title|capfirst}} | Vincis
 {% endblock %}
 {% block content %}
+	{% block title_content %}{% endblock %}
     <div role="main">
 	    {% for article in articles %}
 	        <article role="article" itemscope itemtype="http://schema.org/Article">
@@ -34,12 +34,7 @@
 	            <summary itemprop="review">
 	                {{ article.summary }}
 	            </summary>
-	            <footer id="tags" role="contentinfo" itemprop="keywords">
-	                <h5>Etiquetas: </h5>
-	                <ul>
-	                    {% tags article.tags.all %}
-	                </ul>
-	            </footer>
+	            {% include "tags.html" with tags=article.tags.all %}
 	        </article>
 	    {% endfor %}
 	</div>
