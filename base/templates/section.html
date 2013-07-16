@@ -13,7 +13,7 @@
             <li><a href="/informes" class="{% if title == "informe" %}selected{% endif %}">Informes</a></li>
             <li><a href="/tecnicismos" class="{% if title == "tecnicismo" %}selected{% endif %}">Tecnicismos</a></li>
             <li><a href="/articulos" class="{% if title == "articulo" %}selected{% endif %}">Artículos</a></li>
-            <li role="search"><a href=""><input type="text" value="Buscar"><i style="padding-left: 5px;" class="icon-search"></i></a></li>
+            <li role="search"><form action="/buscar"><input type="text" value="Buscar" name="q"><i style="padding-left: 5px;" class="icon-search"></i></form></li>
         </ul>
     </div>
 {% endblock %}
@@ -41,10 +41,10 @@
     <div class="pagination">
         <ul>
             {% for page in pages %}
-                {% if page == articles.number %}
-                    <li><a class="selected" href="?{{ page }}">{{ page }}</a></li>
+                {% if page == act_page or page == articles.number %}
+                    <li><a class="selected" href="?page={{ page }}{% if query %}&q={{ query }}{% endif %}">{{ page }}</a></li>
                 {% else %}
-                    <li><a href="?page={{ page }}">{{ page }}</a></li>
+                    <li><a href="?page={{ page }}{% if query %}&q={{ query }}{% endif %}">{{ page }}</a></li>
                 {% endif %}
             {% endfor %}
         </ul>

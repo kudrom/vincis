@@ -50,10 +50,10 @@ class TagAdmin(admin.ModelAdmin):
 
 class Page(models.Model):
     title = models.CharField(unique=True, max_length=200, verbose_name=_('title'))
-    pub_date = models.DateField(auto_now_add=True, verbose_name=_('publishing date'))
+    pub_date = models.DateTimeField(auto_now_add=True, verbose_name=_('publishing date'))
     summary = models.TextField(verbose_name=_('summary'))
     tags = models.ManyToManyField(Tag, verbose_name=_('tags'))
-    url = models.URLField(blank=True)
+    url = models.URLField(blank=True, unique=True)
 
     class Meta():
         verbose_name = _("page")

@@ -21,7 +21,7 @@
 	            <li><a href="/informes">Informes</a></li>
 	            <li><a href="/tecnicismos">Tecnicismos</a></li>
 	            <li><a href="/articulos">Artículos</a></li>
-	            <li role="search"><a href=""><input type="text" value="Buscar"><i style="padding-left: 5px;" class="icon-search"></i></a></li>
+	            <li role="search"><form action="/buscar"><input type="text" value="Buscar" name="q"><i style="padding-left: 5px;" class="icon-search"></i></form></li>
 	        </ul>
 	    </div>
     {% endblock %}
@@ -31,7 +31,7 @@
                 <ul>
                     <li><a href=""><i class="icon-envelope"></i></a></li>
                     <li><a href="https://twitter.com/vinc1s"><i class="icon-twitter"></i></a></li>
-                    <li><a href=""><i class="icon-rss"></i></a></li>
+                    <li><a href="/feed"><i class="icon-rss"></i></a></li>
                 </ul>
             </div>
             <a role="banner" href="">
@@ -52,7 +52,7 @@
 
     <div class="overlay hidden"></div>
     <form method="post" action="" class="pop-up hidden">
-        <input placeholder="Título del correo">
+        <input placeholder="Título del correo" type="text">
         <textarea rows=8 placeholder="Contenido del correo"></textarea>
         <button type="submit">Enviar correo</button>
     </form>

@@ -137,11 +137,11 @@ div[role="navigation"] a{
     display: block;
 }
 
-div[role="navigation"] a.selected, .pagination a.selected{
+div[role="navigation"] form.selected, .pagination a.selected{
     background-color: rgba(99, 135, 227, 0.9);
 }
 
-li[role="search"] a.edited{
+li[role="search"] form.edited{
     background: #EDA476;
 }
 
@@ -150,7 +150,7 @@ div[role="navigation"] a:hover{
     background: #734D35;
 }
 
-li[role="search"] a:hover{
+li[role="search"] form:hover{
     cursor: text;
 }
 
@@ -345,13 +345,14 @@ div.footer #powered{
 
     div[role="navigation"] li[role="search"]{
         float:right;
+        color: white;
     }
 
     div[role="navigation"] ul{
         text-align: left;
     }
 
-    div[role="navigation"] a{
+    div[role="navigation"] a, div[role="navigation"] form{
         padding: 3px 4px;
         display: inline;
     }

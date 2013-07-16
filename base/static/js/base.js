@@ -1,7 +1,8 @@
 // Global variables
 var toc = document.querySelector("#toc div"),
     content = document.querySelector("#content"),
-    search = document.querySelector("li[role='search'] a"),
+    search = document.querySelector("li[role='search'] form"),
+    mag_glass = document.querySelector("li[role='search'] i"),
     overlay = document.querySelector(".overlay"),
     mail = document.querySelector(".contact li"),
     popup = document.querySelector(".pop-up");
@@ -85,6 +86,10 @@ search.children[0].onblur = function(e){
     search.classList.remove("selected");
 }
 
+mag_glass.onclick = function(e){
+	search.submit();
+}
+
 /* Initial setup */
 if(toc){
     toc.style.position = "static";
@@ -92,3 +97,20 @@ if(toc){
 }
 
 mail.onclick = showPopup;
+
+
+if(window.location.pathname.split("/")[1] == "buscar"){
+	var aux, aux2, i;
+	aux = window.location.href.split("?");
+	if(aux.length == 2){
+		aux = aux[1].split("&")
+		for(i = 0; i < aux.length; i++){
+			aux2 = aux[i].split("=");
+			if(aux2[0] == "q"){
+				search.classList.add("edited");
+				search.children[0].style.width = "150px";
+				search.children[0].value = aux2[1]
+			}
+		}
+	}
+}

@@ -1,3 +1,4 @@
 Django==1.5.1
 Unidecode==0.04.13
 distribute==0.6.31
+Whoosh==2.5.1

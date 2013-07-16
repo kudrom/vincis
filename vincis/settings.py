@@ -1,3 +1,4 @@
+import os
 # Django settings for vincis project.
 
 DEBUG = False
@@ -5,12 +6,20 @@ TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
+    ("kudrom", "kudrom@lavabit.com"),
 )
 
 MANAGERS = ADMINS
 
 # it's used in the apps to get the location of the server
 LOCALHOST = "http://vinc.is"
+
+# index for whoosh
+INDEX = "vincis_index"
+
+# Maximum number of articles per page
+MAXARTICLES = 10
+
 
 DATABASES = {
     'default': {
@@ -122,6 +131,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'base',
     'report',
+    'search',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -135,8 +145,8 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'simple': {
-            'format': '%(asctime)s %(levelname)s %(message)s '
+        'verbose': {
+            'format': '%(module)s %(asctime)s %(levelname)s %(message)s '
         },
     },
     'filters': {
@@ -154,7 +164,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': 'debug.log',
-            'formatter': 'simple'
+            'formatter': 'verbose'
         },
     },
     'loggers': {

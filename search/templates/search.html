@@ -1,0 +1,16 @@
+{% extends "section.html" %}
+{% load tags %}
+{% block navigation %}
+        <div role="navigation">
+            <ul>
+                <li><a href="/"><i class="icon-home"></i></a></li>
+                <li><a href="/informes">Informes</a></li>
+                <li><a href="/tecnicismos">Tecnicismos</a></li>
+                <li><a href="/articulos">Artículos</a></li>
+                <li role="search"><form action="/buscar"><input type="text" value="Buscar" name="q"><i style="padding-left: 5px;" class="icon-search"></i></form></li>
+            </ul>
+        </div>
+{% endblock %}
+{% block title_content %}
+	<h2>Resultados para la búsqueda <a>{{ title }}</a></h2>
+{% endblock %}
