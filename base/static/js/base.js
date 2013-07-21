@@ -11,12 +11,14 @@ var toc = document.querySelector("#toc div"),
 function handlerToc(e){
     var dy = (window.pageYOffset || document.body.scrollTop);
     if (window.matchMedia("(min-width: 1024px)").matches){
+    	toc.style.width = "100%"
         if (dy > 220 + content.offsetHeight - toc.offsetHeight){
             toc.style.position = "relative";
             toc.style.top = (content.offsetHeight - toc.offsetHeight -20) + "px";
         } else if (dy >= 220){
             toc.style.position = "fixed";
             toc.style.top = "32px";
+            toc.style.width = "30%"
         } else if (dy < 220){
             toc.style.position = "static";
         }
@@ -62,42 +64,44 @@ function hidePopup(e){
     document.body.onkeydown = null;
 }
 
-// Handlers for the search box
-search.onclick = function(e){
-    e.preventDefault();
-    if(!search.classList.contains("edited")){
-        search.children[0].style.width = "150px";
-        search.children[0].value = "";
-    }else{
-        search.classList.remove("edited");
-    }
-    search.classList.add("selected");
-    search.children[1].style.cursor = "pointer";
-}
-search.children[0].onblur = function(e){
-    if(search.children[0].value === ""){
-        search.children[0].value = "Buscar";
-        search.children[0].style.width = "55px";
-        search.children[1].style.cursor = "text";
-    } else {
-        search.children[0].style.width = "150px";
-        search.classList.add("edited");
-    }
-    search.classList.remove("selected");
-}
-
-mag_glass.onclick = function(e){
-	search.submit();
-}
-
 /* Initial setup */
+
+if (search){
+	//Handlers for the search box
+	search.onclick = function(e){
+	    e.preventDefault();
+	    if(!search.classList.contains("edited")){
+	        search.children[0].style.width = "150px";
+	        search.children[0].value = "";
+	    }else{
+	        search.classList.remove("edited");
+	    }
+	    search.classList.add("selected");
+	    search.children[1].style.cursor = "pointer";
+	}
+	search.children[0].onblur = function(e){
+	    if(search.children[0].value === ""){
+	        search.children[0].value = "Buscar";
+	        search.children[0].style.width = "55px";
+	        search.children[1].style.cursor = "text";
+	    } else {
+	        search.children[0].style.width = "150px";
+	        search.classList.add("edited");
+	    }
+	    search.classList.remove("selected");
+	}
+	mag_glass.onclick = function(e){
+		search.submit();
+	}
+}
+
 if(toc){
     toc.style.position = "static";
+    toc.style.width = "100%";
     window.onscroll = handlerToc;
 }
 
 mail.onclick = showPopup;
-
 
 if(window.location.pathname.split("/")[1] == "buscar"){
 	var aux, aux2, i;
@@ -109,7 +113,7 @@ if(window.location.pathname.split("/")[1] == "buscar"){
 			if(aux2[0] == "q"){
 				search.classList.add("edited");
 				search.children[0].style.width = "150px";
-				search.children[0].value = aux2[1]
+				search.children[0].value = decodeURI(aux2[1])
 			}
 		}
 	}

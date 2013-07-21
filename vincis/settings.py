@@ -20,6 +20,7 @@ INDEX = "vincis_index"
 # Maximum number of articles per page
 MAXARTICLES = 10
 
+EMAIL_SUBJECT_PREFIX = "[vincis] "
 
 DATABASES = {
     'default': {
@@ -148,6 +149,9 @@ LOGGING = {
         'verbose': {
             'format': '%(module)s %(asctime)s %(levelname)s %(message)s '
         },
+        'simple': {
+            'format': '%(message)s'
+        },
     },
     'filters': {
         'require_debug_false': {
@@ -166,6 +170,11 @@ LOGGING = {
             'filename': 'debug.log',
             'formatter': 'verbose'
         },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
     },
     'loggers': {
         'django.request': {
@@ -173,9 +182,13 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'vincis.console': {
+        'vincis.debug.log': {
             'handlers': ['file'],
             'level': 'DEBUG',
+        },
+        'vincis.console': {
+            'handlers': ['console'],
+            'level': 'DEBUG'
         },
     }
 }

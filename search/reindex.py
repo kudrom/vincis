@@ -3,7 +3,7 @@ from django.conf import settings
 from whoosh.index import open_dir 
 import logging
 
-logger = logging.getLogger("vincis.console")
+logger = logging.getLogger("vincis.debug.log")
 
 
 def delete_document(document):
@@ -21,5 +21,6 @@ def add_document(document):
     writer.add_document(pk=document.pk,
                         title=document.title, 
                         summary=document.summary, 
-                        tags=",".join(tags))
+                        tags=",".join(tags),
+                        pub_date=document.pub_date)
     writer.commit()

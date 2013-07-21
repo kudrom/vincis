@@ -1,5 +1,4 @@
 {% extends "section.html" %}
-{% load tags %}
 {% block navigation %}
         <div role="navigation">
             <ul>
@@ -12,5 +11,10 @@
         </div>
 {% endblock %}
 {% block title_content %}
-	<h2>Resultados para la búsqueda <a>{{ title }}</a></h2>
+    {% if articles %}
+        <h2>Hay {{ articles|length }} resultado{{ articles|length|pluralize }} para la búsqueda <a>{{ title }}</a></h2>
+       
+    {% else %}
+        <h2>No hubo resultados para la búsqueda <a>{{ title }}</a></h2>
+	{% endif %}
 {% endblock %}

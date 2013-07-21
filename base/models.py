@@ -1,30 +1,30 @@
+import re
+from unidecode import unidecode
 from django.db import models
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 from django.forms import ModelForm
 from django.conf import settings
-from unidecode import unidecode
+from search.reindex import add_document, delete_document
 import logging
 
-logger = logging.getLogger('vincis.console')
+logger = logging.getLogger('vincis.debug.log')
 
-# Modify the url of a model
+# Modify the url of a model to substract espaces and transform  the accents
 def modified_title(title):
         title = title.lower()
-        title = "-".join(title.split(" "))
+        title = "-".join(filter(lambda x: x != "", re.split(r"\s", title)))
+        title = filter(lambda x: x != "/", title)
         title = unidecode(title)
         return title
 
 # Save a model reviewing the url
 def save_model(model, section):
+    resource = modified_title(model.title)
     if (model.url == settings.LOCALHOST + section):
-        resource = modified_title(model.title)
         model.url += resource
-    elif (model.url == ""):
-        resource = modified_title(model.title)
-        model.url += settings.LOCALHOST + section + resource
-    else:
-        model.url = (model.url)
+    elif (not model.url.startswith(settings.LOCALHOST + section)):
+        model.url = settings.LOCALHOST + section + resource
     model.save()
 
 class Tag(models.Model):
@@ -45,6 +45,7 @@ class TagAdmin(admin.ModelAdmin):
     
     def save_model(self, request, model, form, changed):
         model.url = settings.LOCALHOST + "/etiqueta/"+ modified_title(model.title)
+        model.title = unidecode(model.title)
         model.save()
 
 
@@ -60,6 +61,24 @@ class Page(models.Model):
         verbose_name_plural = _("pages")
 
 
+class PageAdmin(admin.ModelAdmin):
+    """Generic ModelAdmin that updates the index. It isn't registered against the admin page"""
+    
+    def save_related(self, request, form, formsets, changed):
+        super().save_related(request, form, formsets, changed)
+        object = Page.objects.get(title=form.cleaned_data['title'])
+        if changed:
+            # update_document doesn't work so i have to do it manually
+            delete_document(object)
+            add_document(object)
+        else:
+            add_document(object)
+
+    def delete_model(self, request, model):
+        # If delete_document is after the call to super, the object is erased and the index goes crazy
+        delete_document(model)
+        super().delete_model(request, model)
+
 class Tech(Page):
     toc = models.TextField(verbose_name=_("table of contents"))
     content = models.TextField(verbose_name=_("content"))
@@ -74,6 +93,7 @@ class Tech(Page):
 
 
 class TechForm(ModelForm):
+    """ Custom ModelForm to allow change the default for the url """
     class Meta:
         model = Tech
     
@@ -82,7 +102,7 @@ class TechForm(ModelForm):
         self.fields['url'].initial = settings.LOCALHOST + "/tecnicismo/"
 
 
-class TechAdmin(admin.ModelAdmin):
+class TechAdmin(PageAdmin):
     fields = ('title', 'summary', 'toc', 'content', 'tags', 'url', 'others')
     list_display = ('title', 'pub_date', 'url')
     form = TechForm
@@ -103,6 +123,7 @@ class Article(Page):
 
 
 class ArticleForm(ModelForm):
+    """ Custom ModelForm to allow change the default for the url """
     class Meta:
         model = Article
     
@@ -111,13 +132,14 @@ class ArticleForm(ModelForm):
         self.fields['url'].initial = settings.LOCALHOST + "/articulo/"
 
 
-class ArticleAdmin(admin.ModelAdmin):
+class ArticleAdmin(PageAdmin):
     fields = ('title', 'summary', 'content', 'tags', 'url')
     list_display = ('title', 'pub_date', 'url')
     form = ArticleForm
 
     def save_model(self, request, model, form, changed):
         save_model(model, "/articulo/")
+
 
 admin.site.register(Tech, TechAdmin)
 admin.site.register(Article, ArticleAdmin)

@@ -1,4 +1,11 @@
 {% extends "search.html" %}
+{% block title %}
+    {{ title|slice:"1:-1" }} | Vincis
+{% endblock %}
 {% block title_content %}
-    <h2>Contenido marcado con <a href="/etiqueta/{{ title }}">{{ title }}</a></h2>
+    {% if articles %}
+        <h2>Contenido marcado con <a href='/etiqueta/{{ title|slice:"1:-1" }}'>{{ title|slice:"1:-1" }}</a></h2>
+    {% else %}
+        <h2>No hay contenido marcado para <a href='/etiqueta/{{ title|slice:"1:-1" }}'>{{ title|slice:"1:-1" }}</a></h2>
+    {% endif %}
 {% endblock %}

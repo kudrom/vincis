@@ -60,10 +60,11 @@
 	        <h2>¿Dónde puedes encontrarme?</h2>
 	        <p>En vincis, participando en la sección de comentarios con aportaciones constructivas que promuevan el debate.</p>
 	        <p>Puedes <a href="">tuitear</a>, pero no prometo responder. Si quieres contarme confidencias puedes hacerlo enviándome un correo:</p>
-	        <form id="sendMail" method="post" action="">
-	            <input placeholder="Título del correo">
-	            <textarea rows=8 placeholder="Contenido del correo"></textarea>
-	            <button type="submit">Enviar correo</button>
+	        <form id="sendMail" method="post" action="/send-mail">
+	           {% csrf_token %}
+	           <input placeholder="Título del correo">
+	           <textarea rows=8 placeholder="Contenido del correo"></textarea>
+	           <button type="submit">Enviar correo</button>
 	        </form>
 	    </div>
 	</div>

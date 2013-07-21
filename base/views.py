@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from base.models import Page, Tech, Article, Tag, modified_title
 from report.models import Report
 from django.views.defaults import page_not_found
@@ -6,10 +6,12 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 from django.contrib.syndication.views import Feed
 from django.utils.translation import ugettext as _
+from django.core.mail import mail_admins
 from search.views import add_search
-import logging
+import logging, re
 
-logger = logging.getLogger('vincis.console')
+logger = logging.getLogger('vincis.debug.log')
+console = logging.getLogger('vincis.console')
 
 
 class RSSFeed(Feed):
@@ -42,11 +44,11 @@ def story(request, section, title):
     resource = get_object_or_404(model[section], url=url)
     context = {"resource": resource}
     if section == "tecnicismo":
-        reports = Tech.objects.get(url=url).report_set.all().order_by("pub_date")
+        reports = Tech.objects.get(url=url).report_set.all().order_by("-pub_date")
         context["reports"] = reports[:5]
         aux = []
         for line in resource.toc.split("\n"):
-            entry = line.split("->")
+            entry = re.split("\s*->", line)
             aux.append({"href": resource.url + "#" + entry[1].strip(), "content": entry[0]})
         context["toc"] = aux
     if section in model:
@@ -59,7 +61,7 @@ def section(request, section):
     """ Function view for the global sections of the blog """
     model = {"informe": Report, "tecnicismo": Tech, "articulo": Article}
     if section in model:
-        object_list = model[section].objects.all()
+        object_list = model[section].objects.all().order_by("-pub_date")
         articles, pages = add_paginator(object_list, request)
         
         return render(request, 'section.html', {"title": section, "articles": articles, "pages": pages})
@@ -80,10 +82,12 @@ def add_paginator(object_list, request):
     return articles, pages
 
 
-def tags(request, title):
-    """ Function view for the tag pages """
-    url = settings.LOCALHOST + "/etiqueta/" + modified_title(title)
-    tag = get_object_or_404(Tag, url=url)
-    object_list = Page.objects.filter(tags=tag)
-    articles, pages = add_paginator(object_list, request)
-    return render(request, 'search.html', {'articles': articles, 'title': title, "pages": pages})
+def send_mail(request):
+    if request.method == "POST":
+        subject = request.POST["subject"]
+        message = request.POST["message"]
+        mail_admins(subject, message)
+        if 'HTTP_REFERER' in request.META:
+            return redirect(request.META['HTTP_REFERER'])
+        else:
+            return redirect("/")

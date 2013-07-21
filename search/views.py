@@ -19,10 +19,10 @@ def get_articles(index, query, request):
     page = int(request.GET.get('page')) if request.GET.get('page') != None else 1
     articles = []
     with index.searcher() as searcher:
-        results = searcher.search_page(query, page, pagelen=settings.MAXARTICLES)
+        results = searcher.search_page(query, page, pagelen=settings.MAXARTICLES, sortedby="pub_date", reverse=True)
         pages = range(max([results.pagenum - 4, 1]), min([results.pagenum + 4, results.pagecount]) + 1)
         for result in results:
-            articles.append(Page.objects.get(url=result["url"]))
+            articles.append(Page.objects.get(pk=result["pk"]))
     return articles, pages, results.pagenum
 
 def search(request):
@@ -38,9 +38,11 @@ def search(request):
                                            "title": request.GET.get("q"),
                                            "act_page": act_page})
 
+@add_search
 def keywords(request, title):
     ix = open_dir(settings.INDEX)
     qp = QueryParser("tags", schema=ix.schema)
+    title = '"{}"'.format("".join(map(lambda x: " " if x == "-" else x, title)))
     q = qp.parse(title)
     articles, pages, act_page = get_articles(ix, q, request)
     return render(request, "keywords.html", {'query': request.GET.get("q"),

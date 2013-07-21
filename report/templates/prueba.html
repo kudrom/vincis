@@ -1,1 +1,13 @@
-hola
+{% extends "base.html" %}
+{% block head %}
+    <link rel="stylesheet" href="/static/prueba/css/base.css">
+{% endblock %}
+{% block scripts %}
+    <script>
+        console.log("hasta aquí hemos llegado");
+    </script>
+{% endblock %}
+{% block navigation %}{% endblock %}
+{% block content %}
+    Esto sería el contenido
+{% endblock %}

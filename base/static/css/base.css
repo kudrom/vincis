@@ -423,11 +423,9 @@ div.footer #powered{
 
     #toc div{
         position: fixed;
+        width: 30%;
     }
 
-    #toc ul{
-        width: 65%;
-    }
 }
 
 @media all and (min-width: 1700px){

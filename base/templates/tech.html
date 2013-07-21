@@ -1,4 +1,21 @@
 {% extends "article.html" %}
+{% block style %}
+    div[role="main"] > .title, #content{
+        width: 100%;
+    }
+    
+	@media all and (min-width: 1024px){
+	    div[role="main"] > .title, #content{
+	        width: 61.13%;
+	    }
+	}
+	
+	@media all and (min-width: 1700px){
+        .wrapper{
+            width: 80%;
+        }
+    }
+{% endblock %}
 {% block navigation %}
     <div role="navigation">
         <ul>

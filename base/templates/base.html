@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="/static/css/base.css">
         <link rel="stylesheet" href="/static/css/font-awesome.min.css">
         <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,300' rel='stylesheet' type='text/css'>
+        {% block head %}{% endblock %}
         <script>{% block script %}{% endblock %}</script>
         <style type="text/css">
         	{% block style %}{% endblock %}
@@ -51,13 +52,15 @@
     </div>
 
     <div class="overlay hidden"></div>
-    <form method="post" action="" class="pop-up hidden">
-        <input placeholder="Título del correo" type="text">
-        <textarea rows=8 placeholder="Contenido del correo"></textarea>
+    <form method="post" action="/send-mail" class="pop-up hidden">
+        {% csrf_token %}
+        <input placeholder="Título del correo" type="text" name="subject">
+        <textarea rows=8 placeholder="Contenido del correo" name="message"></textarea>
         <button type="submit">Enviar correo</button>
     </form>
     <script src="/static/js/logo.js"></script>
     <script src="/static/js/base.js"></script>
+    {% block scripts %}{% endblock %}
     <!--<script src="js/GGS.js"></script>-->
     </body>
 </html>
