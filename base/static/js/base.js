@@ -1,29 +1,14 @@
 // Global variables
-var toc = document.querySelector("#toc div"),
-    content = document.querySelector("#content"),
+var wrapper = document.querySelector(".wrapper"),
+	content = document.querySelector("#content"),
+    nav = document.querySelector("div[role='navigation']"),
     search = document.querySelector("li[role='search'] form"),
     mag_glass = document.querySelector("li[role='search'] i"),
     overlay = document.querySelector(".overlay"),
     mail = document.querySelector(".contact li"),
-    popup = document.querySelector(".pop-up");
-
-// Handler for the table of contents
-function handlerToc(e){
-    var dy = (window.pageYOffset || document.body.scrollTop);
-    if (window.matchMedia("(min-width: 1024px)").matches){
-    	toc.style.width = "100%"
-        if (dy > 220 + content.offsetHeight - toc.offsetHeight){
-            toc.style.position = "relative";
-            toc.style.top = (content.offsetHeight - toc.offsetHeight -20) + "px";
-        } else if (dy >= 220){
-            toc.style.position = "fixed";
-            toc.style.top = "32px";
-            toc.style.width = "30%"
-        } else if (dy < 220){
-            toc.style.position = "static";
-        }
-    }
-}
+    popup = document.querySelector(".pop-up"),
+    warning = document.querySelector(".warning"),
+    close= document.querySelector(".close");
 
 // show the .overlay
 function toggleOverlay(e){
@@ -64,8 +49,31 @@ function hidePopup(e){
     document.body.onkeydown = null;
 }
 
+function isCanvasSupported(){
+	  var elem = document.createElement('canvas');
+	  return !!(elem.getContext && elem.getContext('2d'));
+}
+
+function showWarning(){
+	close.onclick = closeWarning;
+	warning.classList.remove("hidden");
+	nav.style.marginTop = warning.offsetHeight + 'px';
+	wrapper.style.marginTop = (30 + warning.offsetHeight) + 'px';
+	window.onresize = function(){
+		nav.style.marginTop = warning.offsetHeight + 'px';
+		wrapper.style.marginTop = (30 + warning.offsetHeight) + 'px';
+	}
+}
+
+function closeWarning(){
+	nav.style.marginTop = 0;
+	wrapper.style.marginTop = '30px';
+	warning.classList.add("hidden");
+}
+
 /* Initial setup */
 
+// Only the reports doen't have the search box
 if (search){
 	//Handlers for the search box
 	search.onclick = function(e){
@@ -95,26 +103,8 @@ if (search){
 	}
 }
 
-if(toc){
-    toc.style.position = "static";
-    toc.style.width = "100%";
-    window.onscroll = handlerToc;
-}
-
 mail.onclick = showPopup;
 
-if(window.location.pathname.split("/")[1] == "buscar"){
-	var aux, aux2, i;
-	aux = window.location.href.split("?");
-	if(aux.length == 2){
-		aux = aux[1].split("&")
-		for(i = 0; i < aux.length; i++){
-			aux2 = aux[i].split("=");
-			if(aux2[0] == "q"){
-				search.classList.add("edited");
-				search.children[0].style.width = "150px";
-				search.children[0].value = decodeURI(aux2[1])
-			}
-		}
-	}
+if(!isCanvasSupported()){
+	showWarning();
 }
