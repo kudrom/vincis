@@ -8,13 +8,24 @@
         <link rel="stylesheet" href="/static/css/base.css">
         <link rel="stylesheet" href="/static/css/font-awesome.min.css">
         <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,300' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Fauna+One' rel='stylesheet' type='text/css'>
         {% block head %}{% endblock %}
-        <script>{% block script %}{% endblock %}</script>
         <style type="text/css">
         	{% block style %}{% endblock %}
         </style>
     </head>
     <body>
+    <div class="warning hidden">
+        <a class="close"><img src="/static/images/aspa.png"></a>
+        <p>
+	        {% block warning %}
+	        El navegador que estás usando no parece ser lo suficientemente moderno, 
+	        te recomiendo que instales la última versión de 
+	        <a href="https://www.mozilla.org/es-ES/firefox/fx/"> Firefox </a>, 
+	        un navegador libre que te permitirá experimentar la web con su máxima expresión.
+	        {% endblock %}
+        </p>
+    </div>
     {% block navigation %}
 	    <div role="navigation">
 	        <ul>

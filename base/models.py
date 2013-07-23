@@ -19,7 +19,7 @@ def modified_title(title):
         return title
 
 # Save a model reviewing the url
-def save_model(model, section):
+def save_model(model, section, form=None):
     resource = modified_title(model.title)
     if (model.url == settings.LOCALHOST + section):
         model.url += resource
@@ -108,7 +108,7 @@ class TechAdmin(PageAdmin):
     form = TechForm
 
     def save_model(self, request, model, form, changed):
-        save_model(model, "/tecnicismo/")
+        save_model(model, "/tecnicismo/", form)
 
 
 class Article(Page):

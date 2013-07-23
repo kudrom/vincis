@@ -3,3 +3,5 @@ dev.db
 debug.log
 *.pyc
 __pycache__
+vincis_index/
+weird_error

@@ -4,7 +4,7 @@
         width: 100%;
     }
     
-	@media all and (min-width: 1024px){
+	@media all and (min-width: 1025px){
 	    div[role="main"] > .title, #content{
 	        width: 61.13%;
 	    }
@@ -15,6 +15,58 @@
             width: 80%;
         }
     }
+{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="/static/css/shCoreVincis.css">
+{% endblock %}
+{% block scripts %}
+    <script>
+        // handler for the table of contents
+        var toc = document.querySelector("#toc div");
+        toc.style.position = "static";
+        toc.style.width = "100%";
+        window.onscroll = function(e){
+            var dy = (window.pageYOffset || document.body.scrollTop);
+            if (window.matchMedia("(min-width: 1025px)").matches){
+                toc.style.width = "100%";
+                if (dy > 220 + content.offsetHeight - toc.offsetHeight){
+                    toc.style.position = "relative";
+                    toc.style.top = (content.offsetHeight - toc.offsetHeight -20) + "px";
+                } else if (dy >= 220){
+                    toc.style.position = "fixed";
+                    toc.style.top = "32px";
+                    toc.style.width = "30%"
+                } else if (dy < 220){
+                    toc.style.position = "static";
+                }
+            } else {
+                toc.style.position = "static";
+                toc.style.width = "100%";
+            }
+        }
+        var others = document.querySelectorAll(".related li");
+        for(var i = 0; i < others.length; i++){
+            others[i].onmouseover = function(e){
+                 e.currentTarget.children[1].classList.remove("hidden");
+            }
+            others[i].onmouseout = function(e){
+                e.currentTarget.children[1].classList.add("hidden");
+            }
+        }
+    </script>
+    <script src="/static/js/shCore.js"></script>
+    <script src="/static/js/shAutoloader.js"></script>
+    <script>
+        SyntaxHighlighter.autoloader(
+            'bash shell /static/js/shBrushBash.js',
+            'css /static/js/shBrushCss.js',
+            'js jscript javascript /static/js/shBrushJScript.js',
+            'python py /static/js/shBrushPython.js',
+            'sql /static/js/shBrushSql.js',
+            'xml xhtml html /static/js/shBrushXml.js'
+        );
+        SyntaxHighlighter.all();
+    </script>
 {% endblock %}
 {% block navigation %}
     <div role="navigation">
@@ -28,6 +80,7 @@
     </div>
 {% endblock %}
 {% block toc %}
+    <a href="#toc" id="totoc"><i class="icon-list-ul"></i></a>
     <div id="toc">
         <div>
             <h5>Indice de contenidos:</h5>
@@ -40,22 +93,37 @@
     </div>
 {% endblock %}
 {% block related_articles %}
-	<div id="related-articles">
-	    <h5>Artículos relacionados:</h2>
-	    <ul>
-	       {% for other in resource.others.all %}
-                <li><a href="{{ other.url }}">{{ other.title }}</a></li>
-            {% endfor %}
-	    </ul>
+	<div id="related-articles" class="related">
+	   {% if resource.others.all|length > 0 %}
+		    <h5>Tecnicismos relacionados:</h2>
+		    <ul>
+		       {% for other in resource.others.all %}
+	                <li>
+	                    <a href="{{ other.url }}">{{ other.title }}</a>
+	                    <summary class="hidden">{{ other.summary }}</summary>
+	                </li>
+	            {% endfor %}
+		    </ul>
+		{% else %}
+		    <h5>No hay tecnicismos relacionados por el momento</h5>
+	    {% endif %}
 	</div>
 {% endblock %}
 {% block related_reports %}
-    <div id="related-reports">
-        <h5>Este artículo ha aparecido en los siguientes informes:</h2>
-        <ul>
-            {% for other in reports %}
-                <li><a href="{{ other.url }}">{{ other.title }}</a></li>
-            {% endfor %}
-        </ul>
+    
+    <div id="related-reports" class="related">
+        {% if reports|length > 0 %}
+	        <h5>Informes relacionados:</h2>
+	        <ul>
+	            {% for other in reports %}
+	                <li>
+	                    <a href="{{ other.url }}">{{ other.title }}</a>
+	                    <summary class="hidden">{{ other.summary }}</summary>
+	               </li>
+	            {% endfor %}
+	        </ul>
+	     {% else %}
+	        <h5>No hay informes relacionados por el momento</h5>
+	     {% endif %}
     </div>
 {% endblock %}

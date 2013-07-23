@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% block style %}
-@media all and (min-width: 1280px){
-    .wrapper{
-        width: 70%;
-    }
-}
+	@media all and (min-width: 1280px){
+	    .wrapper{
+	        width: 70%;
+	    }
+	}
 {% endblock %}
 {% block navigation %}
     <div role="navigation">
         <ul>
             <li><a href="/"><i class="icon-home"></i></a></li>
-            <li><a href="/informes" class="{% if title == "informe" %}selected{% endif %}">Informes</a></li>
-            <li><a href="/tecnicismos" class="{% if title == "tecnicismo" %}selected{% endif %}">Tecnicismos</a></li>
-            <li><a href="/articulos" class="{% if title == "articulo" %}selected{% endif %}">Artículos</a></li>
+            <li><a href="/informes" class="{% if title == 'informe' %}selected{% endif %}">Informes</a></li>
+            <li><a href="/tecnicismos" class="{% if title == 'tecnicismo' %}selected{% endif %}">Tecnicismos</a></li>
+            <li><a href="/articulos" class="{% if title == 'articulo' %}selected{% endif %}">Artículos</a></li>
             <li role="search"><form action="/buscar"><input type="text" value="Buscar" name="q"><i style="padding-left: 5px;" class="icon-search"></i></form></li>
         </ul>
     </div>
@@ -26,7 +26,7 @@
 	    {% for article in articles %}
 	        <article role="article" itemscope itemtype="http://schema.org/Article">
 	            <div class="title">
-	                <h2 itemprop="name"><a href="{{ article.url}}">{{ article.title|capfirst }}</a></h2>
+	                <h3 itemprop="name"><a href="{{ article.url}}">{{ article.title|capfirst }}</a></h2>
 	                <time itemprop="dateCreated" datetime="{{ article.pub_date|date:"Y-m-d" }}">
 	                    {{ article.pub_date|date:"d F Y"}}
 	                </time>

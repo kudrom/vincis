@@ -1,4 +1,32 @@
 {% extends "section.html" %}
+{% block style %}
+    @media all and (min-width: 1280px){
+        .wrapper{
+            width: 70%;
+        }
+    }
+    h2{
+        margin: 20px 0 30px;
+    }
+{% endblock %}
+{% block scripts %}
+    <script>
+        // Fills the search box with the query of the url
+        var aux, aux2, i;
+	    aux = window.location.href.split("?");
+	    if(aux.length == 2){
+	        aux = aux[1].split("&")
+	        for(i = 0; i < aux.length; i++){
+	            aux2 = aux[i].split("=");
+	            if(aux2[0] == "q"){
+	                search.classList.add("edited");
+	                search.children[0].style.width = "150px";
+	                search.children[0].value = decodeURI(aux2[1])
+	            }
+	        }
+	    }
+    </script>
+{% endblock %}
 {% block navigation %}
         <div role="navigation">
             <ul>

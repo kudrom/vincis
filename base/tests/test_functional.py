@@ -32,7 +32,7 @@ class FunctionalTest(LiveServerTestCase):
         navigation.find_element_by_link_text("Tecnicismos").click()
         segundo = Tech.objects.order_by("-pub_date")[1]
         articles = self.browser.find_elements_by_tag_name("article")
-        self.assertEqual(len(articles), 2)
+        self.assertEqual(len(articles), 3)
         articles[1].find_element_by_link_text(segundo.title).click()
         
         # Pagination

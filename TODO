@@ -3,15 +3,9 @@ formulario de email -> comprobarlo in situ -> modificar el backend en produccion
 
 modificar el logo para que rule bien en el notebook
 cambiar home
-cambiar la estructura de la navegacion de los tecnicismos
-detallar el CSS para el contenido (headings sobre todo) y las búsquedas
+
+
 error handling (404, 403, 500) -> test
-
-
 estudiar la velocidad de carga
-integrar el resaltado de la sintaxis
-warning por navegador
+integrar google analytics
 
-
-testing -> informes
-añadir logo de whoosh

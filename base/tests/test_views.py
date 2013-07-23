@@ -1,8 +1,14 @@
 import locale
-from django.test import TestCase
+from django.test import TestCase, LiveServerTestCase
 from django.conf import settings
 from django.core import mail
+from selenium import webdriver
+from selenium.webdriver.support.wait import WebDriverWait
 from base.models import Tag, Article, Tech, save_model
+
+import logging
+
+logger = logging.getLogger("vincis.debug.log")
 
 class ViewsTestCase(TestCase):
     fixtures = ["model.json"]
@@ -54,3 +60,18 @@ class ViewsTestCase(TestCase):
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[1].subject, "{}hola".format(settings.EMAIL_SUBJECT_PREFIX))
     
+class FunctionalTest(LiveServerTestCase):
+    fixtures = ["model.json"]
+    
+    def setUp(self):
+        self.browser = webdriver.Firefox()
+        self.browser.implicitly_wait(3)
+        self.wait = WebDriverWait(self.browser, 10)
+
+    def tearDown(self):
+        self.browser.quit()
+
+    def test_syntax_highlighter(self):
+        self.browser.get(self.live_server_url + "/tecnicismo/codigo")
+        pres = self.browser.find_elements_by_css_selector(".syntaxhighlighter")
+        self.assertEqual(len(pres), 4)
