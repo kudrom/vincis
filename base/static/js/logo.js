@@ -280,22 +280,25 @@ function drawLogo(){
                     'x': x,
                     'y': y,
                     'letter': letter,
-                    'color' : color,
-                    'selected' : false
+                    'color' : color
             });
         }
     }
 }
 
 // Redraw each letter of a letter updating also the color
-function redrawLetter(letter){
+function redrawLetter(selected, loc, letter){
     var i,
-        bbox = bounding_boxes[letter],
         aux;
-    context.fillStyle = "rgba(255, 255, 255, 1)";
-    context.fillRect(bbox.x * ZOOM, bbox.y * ZOOM, bbox.width * ZOOM, bbox.height * ZOOM);
-    for(i = 0; i < juice[letter]; i++){
-        aux = letters[letter][i];
+    context.save();
+    context.beginPath();
+    context.arc(loc.x, loc.y, MAX_RADIUS, 0, Math.PI*2);
+    context.clip();
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.restore();
+    context.beginPath();
+    for(i = 0; i < selected.length; i++){
+        aux = selected[i];
         context.fillStyle = aux.color;
         context.fillText(aux.letter, aux.x, aux.y);
     }
@@ -311,12 +314,14 @@ function dist(p1, p2){
 // Handler for the logo when the user hover over it
 canvas.onmousemove = function(e){
     var loc = windowToCanvas(e.clientX, e.clientY),
+    	selected = [],
         letter_selected,
         distance,
         angle,
         dx,
         dy,
-        i;
+        i,
+        aux;
         
     e.preventDefault();
     for(i = 0; i < 8; i++){
@@ -330,19 +335,20 @@ canvas.onmousemove = function(e){
     if(letter_selected !== undefined){
         e.currentTarget.parentNode.style.cursor = "pointer";
         for(i = 0; i < juice[letter_selected]; i++){
-            distance = dist(letters[letter_selected][i], loc);
+        	aux = letters[letter_selected][i];
+            distance = dist(aux, loc);
             if(distance < MAX_RADIUS){
-                // Each letter is going to move out of the radius of action of the pointer
-                angle = Math.atan2(letters[letter_selected][i].y - loc.y,
-                               letters[letter_selected][i].x - loc.x);
+                // Each 'point letter' of the letter selected is going to move 
+            	// out of the radius of action of the pointer
+                angle = Math.atan2(aux.y - loc.y, aux.x - loc.x);
                 dx = Math.cos(angle) * (MAX_RADIUS - distance);
                 dy = Math.sin(angle) * (MAX_RADIUS - distance);
-                letters[letter_selected][i].x += dx;
-                letters[letter_selected][i].y += dy;
-                letters[letter_selected][i].selected = true;
+                aux.x += dx;
+                aux.y += dy;
+                selected.push(aux);
             }
         }
-        redrawLetter(letter_selected);
+        redrawLetter(selected, loc, letter_selected);
     } else{
         e.currentTarget.parentNode.style.cursor = "default";
     }
