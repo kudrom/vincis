@@ -234,7 +234,7 @@ li[role="search"]{
     color: white;
 }
 
-li[role="search"] form.edited{
+.edited{
     background: #EDA476;
 }
 

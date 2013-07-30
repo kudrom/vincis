@@ -1,12 +1,8 @@
 formulario de email -> comprobarlo in situ -> modificar el backend en produccion -> chequear el error
 
 
-modificar el logo para que rule bien en el notebook -> quizás aprovechando el campo selected de letters[i]
-añadir layers al logo
-cambiar home
-
+favicon
 
 error handling (404, 403, 500) -> test
 estudiar la velocidad de carga
 integrar google analytics
-

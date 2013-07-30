@@ -1,0 +1,135 @@
+h2{
+    margin-bottom: 15px;
+}
+
+article{
+	text-align: justify;
+}
+
+.wrapper{
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+#header{
+	margin: 26px 0 0 0;
+	text-align:center;
+	z-index: 10;
+}
+
+article{
+	padding: 0 20px;
+	position: relative;
+}
+
+#vincis.update{
+    background-image: -webkit-radial-gradient(center center, circle farthest-side, white 0%, white 75%, #ebebeb 100%);  
+    background-image: -moz-radial-gradient(center center, circle farthest-side, white 0%, white 75%, #ebebeb 100%);  
+    background-image: -ms-radial-gradient(center center, circle farthest-side, white 0%, white 75%, #ebebeb 100%);  
+    background-image: -o-radial-gradient(center center, circle farthest-side, white 0%, white 75%, #ebebeb 100%); 
+}
+
+.first{
+	margin-bottom: 20px;
+}
+
+.second{
+	list-style: none;
+}
+
+#vincis .second li{
+	background: rgba(99, 135, 227, 0.3);
+	opacity: 0.6;
+	padding: 5px 10px;
+	cursor: default;
+}
+
+#vincis .second li:hover, #vincis .second li.selected{
+    background: rgba(99, 135, 227, 0.8);
+    opacity: 1;
+    box-shadow: 0 0 3px #E1E4EA inset;
+}
+
+#vincis h3{
+	text-align: center;
+}
+
+#vincis .above-canvas{
+	position: relative;
+	z-index: 10;
+}
+
+#vincis > canvas{
+	position: absolute;
+	right: calc(55% - 200px);
+	top: calc(45% - 200px);
+	opacity: 0.5;
+}
+
+canvas#report{
+	top: calc(55% - 200px);
+}
+
+canvas#article{
+	top: 0;
+	right: 0;
+}
+
+#who{
+	padding-top: 10px;
+	background: 
+	
+}
+
+#sendMail input, #sendMail textarea{
+    width: 100%;
+    display: block;
+}
+
+@media all and (min-width: 500px){
+	article{
+	   padding: 0 8%;
+	}
+}
+
+@media all and (min-width: 800px){
+	.first{
+        float: left;
+        width: 40%;
+        margin-left: 20px;
+    }
+    
+    .second{
+        float:right;
+        width: 50%;
+        list-style: none;
+    }
+}
+
+@media all and (min-width: 1025px){
+    .first{
+        float: left;
+        width: 30%;
+        margin-left: 20px;
+    }
+    
+    .second{
+        float:right;
+        width: 40%;
+        list-style: none;
+    }
+}
+
+@media all and (min-width: 1280px){
+	h2{
+	   margin-top: 50px;
+	}
+    article{
+        padding: 0 16%;
+    }
+}
+
+@media all and (min-width: 1700px){
+
+}
