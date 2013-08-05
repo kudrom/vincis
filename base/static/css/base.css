@@ -26,7 +26,7 @@ button{
     margin-top: 10px;
     border-radius: 15px;
     padding: 5px 10px;
-    background: linear-gradient(to bottom, #FFFFFF, #DFDFDF) repeat scroll 0 0 transparent;
+    background: linear-gradient(to bottom, #F5F5F5, #DFDFDF) repeat scroll 0 0 transparent;
     box-shadow: 0 0 5px #aaa;
     border: none;
 }
