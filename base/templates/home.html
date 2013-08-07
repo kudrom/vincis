@@ -23,12 +23,12 @@
                 </a>
             </div>
             <h2 class="above-canvas">¿Qué es vincis?</h2>
-            <div class="first above-canvas" >Un lugar del ciberespacio que recoge gran parte de lo que he escrito, tanto código como artículos o relatos, y que me he tomado la libertad de agrupar en tres conjuntos:</div>
+            <div class="first above-canvas">Mi obra, que agrupo en tres categorías: Informes, Tecnicismos y Artículos.</div>
             <div class="above-canvas">
 		        <ul class="second">
-		            <li class="report"><h3>Informes</h3> Abordan cuestiones de actualidad desde la perspectiva de un <a>ciudadano</a> y no la de un hipotético "periodista", politólogo o letrado.</li>
-		            <li class="tech"><h3>Tecnicismos</h3> Engloban los artículos técnicos que he escrito; muchos de ellos guardan estrecha relación con los informes ya que intentan explicar su implementación para ofrecer la perspectiva del desarrollador sobre cada  informe. Se advierte que el contenido es solo apto para desarrolladores.</li>
-		            <li class="article"><h3>Artículos</h3> Recogen cualquier cosa que se me pase por la cabeza y no exija que ames u odies python para comprenderlo.</li>
+		            <li class="report"><h3>Informes</h3>Donde informo como <a>ciudadano</a> de ciertas cuestiones que considero importantes.</li>
+		            <li class="tech"><h3>Tecnicismos</h3>Donde humildemente correspondo los esfuerzos remotos que me educaron frente a un terminal.</li>
+		            <li class="article"><h3>Artículos</h3>Donde recojo algunos garabatos en cuadernos y folios.</li>
 		        </ul>
             </div>
             <canvas id="report" class="hidden" width=400 height=300></canvas>
@@ -38,13 +38,12 @@
         <article id="who">
             <h2>¿Quién eres?</h2>
             <div class="first">
-                <p>¿Acaso importa? No me <a>malinterpretes</a>, soy un desarrollador software y ciudadano sensibilizado; la edad, nacionalidad, nombre, sexo o peinado permite que me los reserve, no creo que aporten nada nuevo.</p>
-                <p>Imagíname como más te convenga para disfrutar al máximo de lo que escribo, pero procura no obsesionarte con la máscara que voluntariamente exhibo.</p>
+                <p><a>¿Acaso importa?</a> Basta decir que me expreso escribiendo; la edad, nacionalidad, nombre o sexo permite que me los reserve, no creo que aporten nada nuevo.</p>
             </div>
             <form class ="second" id="sendMail" method="post" action="/send-mail">
                {% csrf_token %}
-               <input placeholder="Título del correo">
-               <textarea rows=8 placeholder="Contenido del correo"></textarea>
+               <input placeholder="Título del correo que me vas a enviar.">
+               <textarea rows=8 placeholder="Contenido del correo que me vas a enviar."></textarea>
                <button type="submit">Enviar correo</button>
             </form>
         </article>

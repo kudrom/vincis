@@ -64,7 +64,7 @@ article{
 	position: absolute;
 	right: calc(55% - 200px);
 	top: calc(45% - 200px);
-	opacity: 0.5;
+	opacity: 0.4;
 }
 
 canvas#report{
@@ -85,6 +85,23 @@ canvas#article{
 #sendMail input, #sendMail textarea{
     width: 100%;
     display: block;
+    padding: 2px;
+    border: none;
+    background: #f5f5f5;
+}
+
+#sendMail input:active, #sendMail textarea:active{
+	background: #eee;
+}
+
+#sendMail input{
+	margin-bottom: 2px;
+}
+
+button{
+	border-radius: 0 0 5px 5px;
+	box-shadow: none;
+	margin: 0;
 }
 
 @media all and (min-width: 500px){
