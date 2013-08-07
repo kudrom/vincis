@@ -1,11 +1,9 @@
 var articles = document.querySelectorAll("article"),
 	vincis = articles[0],
-	nav = document.querySelector("div[role='navigation']"),
 	sections = document.querySelectorAll("#vincis .second li"),
+	// In order to avoid the overlap of the earlier handler in logo.js
 	oldfunction = window.onresize,
     i,
-    ORANGE = "#EF8E51",
-	BLUE = "#829FE9",
     lastTime = +new Date(),
     // view the call to cancelAnimationFrame in the handler for the sections
     currentAnimation,

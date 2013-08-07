@@ -3,5 +3,5 @@ from django.views.generic import TemplateView
 
 urlpatterns = patterns('',
 
-    url(r'^informe-de-control$', TemplateView.as_view(template_name="prueba.html")),
+    url(r'^sistema-electoral$', TemplateView.as_view(template_name="loreg.html")),
 )

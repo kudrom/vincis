@@ -8,7 +8,27 @@ var wrapper = document.querySelector(".wrapper"),
     mail = document.querySelector(".contact li"),
     popup = document.querySelector(".pop-up"),
     warning = document.querySelector(".warning"),
-    close= document.querySelector(".close");
+    close= document.querySelector(".close"),
+    ORANGE = "#EF8E51",
+	BLUE = "#829FE9";
+
+// *************************** COMMON FUNCTIONS *******************************
+
+//Transforms the coordinates of the dom element into the internal canvas
+function windowToCanvas(x, y, canvas){
+    var bbox = canvas.getBoundingClientRect();
+    return {x: x-bbox.left * (canvas.width  / bbox.width),
+            y: y-bbox.top  * (canvas.height / bbox.height)}
+}
+
+//Calculates the distance between two points
+function dist(p1, p2){
+    var dx = p1.x - p2.x,
+        dy = p1.y - p2.y;
+    return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+}
+
+
 
 // show the .overlay
 function toggleOverlay(e){

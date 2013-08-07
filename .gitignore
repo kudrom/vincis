@@ -5,3 +5,6 @@ debug.log
 __pycache__
 vincis_index/
 weird_error
+.project
+.pydevproject
+.settings

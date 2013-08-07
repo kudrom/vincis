@@ -1,9 +1,9 @@
-var canvas = document.querySelector("canvas#logo"),
-    context = canvas.getContext("2d"),
-    bckgCanvas = document.createElement("canvas"),
-    bckgContext = bckgCanvas.getContext("2d"),
-    MAX_RADIUS = 10,
-    ZOOM = canvas.width / 450,
+var canvasLogo = document.querySelector("canvas#logo"),
+    contextLogo = canvasLogo.getContext("2d"),
+    bckgCanvasLogo = document.createElement("canvas"),
+    bckgContextLogo = bckgCanvasLogo.getContext("2d"),
+    LOGO_MAX_RADIUS = 10,
+    LOGO_ZOOM = canvasLogo.width / 450,
     juice = [300, 100, 40, 200, 200, 100, 40, 160],
     end_points = [
         [ //V
@@ -177,41 +177,9 @@ var canvas = document.querySelector("canvas#logo"),
     letters = [[], [], [], [], [], [], [], []],
     i;
 
-// Auxiliar function to draw the control and end points
-function drawPoints(){
-    context.save();
-    context.fillStyle = "rgba(255,0,0,0.3)";
-    for(var i = 0; i < control_points.length; i++){
-        for(var j = 0; j < control_points[i].length; j++){
-            context.beginPath();
-            context.arc(control_points[i][j].x * ZOOM, control_points[i][j].y * ZOOM,
-                        4, 0, Math.PI*2, false);
-            context.fill()
-        }
-    }
-    context.restore()
-    context.save();
-    context.fillStyle = "blue";
-    for(var i = 0; i < end_points.length; i++){
-        for(var j = 0; j < end_points[i].length; j++){
-            context.beginPath();
-            context.arc(end_points[i][j].x * ZOOM, end_points[i][j].y * ZOOM,
-                        2, 0, Math.PI*2, false);
-            context.fill()
-        }
-    }
-    context.restore()
-}
-
-// Transforms the coordinates of the dom element into the internal canvas
-function windowToCanvas(x, y){
-    var bbox = canvas.getBoundingClientRect();
-    return {x: x-bbox.left * (canvas.width  / bbox.width),
-            y: y-bbox.top  * (canvas.height / bbox.height)}
-}
-
+// This two functions aren't used in the production site
 // Draws the logo's path
-function drawPath(context){
+function drawLogoPath(context){
     var len = control_points.length,
         i;
     context.beginPath();
@@ -219,33 +187,33 @@ function drawPath(context){
         drawLetterPath(context, i);
     }
 }
+//Draws the logo in a plain color
+function drawPlainLogo(){
+    contextLogo.save()
+    contextLogo.fillStyle = "#eee";
+    contextLogo.strokeStye= "black";
+    drawLogoPath(contextLogo);
+    contextLogo.fill();
+    contextLogo.restore();
+}
+
 
 // Draws a letter of the path's logo
 function drawLetterPath(context, letter){
     var len = end_points[letter].length,
         i;
 
-    context.moveTo(end_points[letter][0].x * ZOOM, end_points[letter][0].y * ZOOM);
+    context.moveTo(end_points[letter][0].x * LOGO_ZOOM, end_points[letter][0].y * LOGO_ZOOM);
     for(i = 0; i < len; i++){
         context.bezierCurveTo(
-            control_points[letter][2*i].x * ZOOM,
-            control_points[letter][2*i].y * ZOOM,
-            control_points[letter][2*i + 1].x * ZOOM,
-            control_points[letter][2*i + 1].y * ZOOM,
-            end_points[letter][(i+1) % len].x * ZOOM,
-            end_points[letter][(i+1) % len].y * ZOOM
+            control_points[letter][2*i].x * LOGO_ZOOM,
+            control_points[letter][2*i].y * LOGO_ZOOM,
+            control_points[letter][2*i + 1].x * LOGO_ZOOM,
+            control_points[letter][2*i + 1].y * LOGO_ZOOM,
+            end_points[letter][(i+1) % len].x * LOGO_ZOOM,
+            end_points[letter][(i+1) % len].y * LOGO_ZOOM
         );
     }
-}
-
-// Draws the logo in a plain color
-function drawPlainLogo(){
-    context.save()
-    context.fillStyle = "#eee";
-    context.strokeStye= "black";
-    drawPath(context);
-    context.fill();
-    context.restore();
 }
 
 // Draws the logo with the pinky-winky effect
@@ -259,22 +227,22 @@ function drawLogo(){
         i,
         j;
         
-    context.fillStyle = "rgba(255, 255, 255, 1)";
-    context.fillRect(canvas.x, canvas.y, canvas.width, canvas.height);
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    context.font = "7px Round"
-    context.fillStyle = "#888";
+    contextLogo.fillStyle = "rgba(255, 255, 255, 1)";
+    contextLogo.fillRect(canvasLogo.x, canvasLogo.y, canvasLogo.width, canvasLogo.height);
+    contextLogo.textAlign = "center";
+    contextLogo.textBaseline = "middle";
+    contextLogo.font = "7px Round"
+    contextLogo.fillStyle = "#888";
     for(i = 0; i < len; i++){
-        bckgContext.beginPath();
-        drawLetterPath(bckgContext, i);
+        bckgContextLogo.beginPath();
+        drawLetterPath(bckgContextLogo, i);
         for(j = 0; j < juice[i]; j++){
             do{
-               x = Math.random() * canvas.width;
-               y = Math.random() * canvas.height;
-            }while(!bckgContext.isPointInPath(x, y))
+               x = Math.random() * canvasLogo.width;
+               y = Math.random() * canvasLogo.height;
+            }while(!bckgContextLogo.isPointInPath(x, y))
             letter = abc[Math.round(Math.random() * 53)];
-            context.fillText(letter, x, y);
+            contextLogo.fillText(letter, x, y);
             color = j % 2 == 0 ? "#EF8E51" : "#8CA5E2";
             letters[i].push({
                     'x': x,
@@ -290,30 +258,23 @@ function drawLogo(){
 function redrawLetter(selected, loc, letter){
     var i,
         aux;
-    context.save();
-    context.beginPath();
-    context.arc(loc.x, loc.y, MAX_RADIUS, 0, Math.PI*2);
-    context.clip();
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.restore();
-    context.beginPath();
+    contextLogo.save();
+    contextLogo.beginPath();
+    contextLogo.arc(loc.x, loc.y, LOGO_MAX_RADIUS, 0, Math.PI*2);
+    contextLogo.clip();
+    contextLogo.clearRect(0, 0, canvasLogo.width, canvasLogo.height);
+    contextLogo.restore();
+    contextLogo.beginPath();
     for(i = 0; i < selected.length; i++){
         aux = selected[i];
-        context.fillStyle = aux.color;
-        context.fillText(aux.letter, aux.x, aux.y);
+        contextLogo.fillStyle = aux.color;
+        contextLogo.fillText(aux.letter, aux.x, aux.y);
     }
 }
 
-// Calculates the distance between two points
-function dist(p1, p2){
-    var dx = p1.x - p2.x,
-        dy = p1.y - p2.y;
-    return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-}
-
 // Handler for the logo when the user hover over it
-canvas.onmousemove = function(e){
-    var loc = windowToCanvas(e.clientX, e.clientY),
+canvasLogo.onmousemove = function(e){
+    var loc = windowToCanvas(e.clientX, e.clientY, canvasLogo),
     	selected = [],
         letter_selected,
         distance,
@@ -325,9 +286,9 @@ canvas.onmousemove = function(e){
         
     e.preventDefault();
     for(i = 0; i < 8; i++){
-        bckgContext.beginPath();
-        drawLetterPath(bckgContext, i);
-        if(bckgContext.isPointInPath(loc.x, loc.y)){
+        bckgContextLogo.beginPath();
+        drawLetterPath(bckgContextLogo, i);
+        if(bckgContextLogo.isPointInPath(loc.x, loc.y)){
             letter_selected = i;
             break;
         }
@@ -337,12 +298,12 @@ canvas.onmousemove = function(e){
         for(i = 0; i < juice[letter_selected]; i++){
         	aux = letters[letter_selected][i];
             distance = dist(aux, loc);
-            if(distance < MAX_RADIUS){
+            if(distance < LOGO_MAX_RADIUS){
                 // Each 'point letter' of the letter selected is going to move 
             	// out of the radius of action of the pointer
                 angle = Math.atan2(aux.y - loc.y, aux.x - loc.x);
-                dx = Math.cos(angle) * (MAX_RADIUS - distance);
-                dy = Math.sin(angle) * (MAX_RADIUS - distance);
+                dx = Math.cos(angle) * (LOGO_MAX_RADIUS - distance);
+                dy = Math.sin(angle) * (LOGO_MAX_RADIUS - distance);
                 aux.x += dx;
                 aux.y += dy;
                 selected.push(aux);
@@ -356,33 +317,33 @@ canvas.onmousemove = function(e){
 
 // Redraw the logo if the display is 500px maximum
 window.onresize = function(e){
-    if(window.matchMedia("(max-width: 500px)").matches && ZOOM === 1){
-        canvas.width = 300;
-        canvas.height = 120;
-        bckgCanvas.width = canvas.width;
-        bckgCanvas.height = canvas.height;
-        ZOOM = canvas.width / 450;
+    if(window.matchMedia("(max-width: 500px)").matches && LOGO_ZOOM === 1){
+        canvasLogo.width = 300;
+        canvasLogo.height = 120;
+        bckgCanvasLogo.width = canvasLogo.width;
+        bckgCanvasLogo.height = canvasLogo.height;
+        LOGO_ZOOM = canvasLogo.width / 450;
         juice = [150, 50, 15, 100, 100, 50, 15, 80];
         letters = [[], [], [], [], [], [], [], []];
-        MAX_RADIUS = 5;
+        LOGO_MAX_RADIUS = 5;
         drawLogo();
     }
-    else if(window.matchMedia("(min-width: 500px)").matches && ZOOM !== 1){
-        canvas.width = 450;
-        canvas.height = 180;
-        bckgCanvas.width = canvas.width;
-        bckgCanvas.height = canvas.height;
-        ZOOM = 1;
+    else if(window.matchMedia("(min-width: 500px)").matches && LOGO_ZOOM !== 1){
+        canvasLogo.width = 450;
+        canvasLogo.height = 180;
+        bckgCanvasLogo.width = canvasLogo.width;
+        bckgCanvasLogo.height = canvasLogo.height;
+        LOGO_ZOOM = 1;
         juice = [300, 100, 40, 200, 200, 100, 40, 160];
         letters = [[], [], [], [], [], [], [], []];
-        MAX_RADIUS = 10;
+        LOGO_MAX_RADIUS = 10;
         drawLogo();
     }
 
 }
 
 /* Initial setup */
-canvas.parentNode.style.cursor = "default";
-bckgCanvas.width = canvas.width;
-bckgCanvas.height = canvas.height;
+canvasLogo.parentNode.style.cursor = "default";
+bckgCanvasLogo.width = canvasLogo.width;
+bckgCanvasLogo.height = canvasLogo.height;
 drawLogo();
