@@ -3,11 +3,18 @@
     <link rel="stylesheet" href="/static/loreg/loreg.css">
 {% endblock %}
 {% block scripts %}
+    <script src="/static/tinyColor.js"></script>
     <script src="/static/events.js"></script>
     <script src="/static/graphics.js"></script>
+    <script src="/static/RGraph/RGraph.common.core.js"></script>
+    <script src="/static/RGraph/RGraph.common.dynamic.js"></script>
+    <script src="/static/RGraph/RGraph.common.tooltips.js"></script>
+    <script src="/static/RGraph/RGraph.pie.js"></script>
     <script src="/static/loreg/loreg.js"></script>
 {% endblock %}
 {% block navigation %}{% endblock %}
 {% block content %}
-    <canvas id="map"></canvas>
+    <canvas id="map" class="hidden"></canvas>
+    <canvas id="congress"></canvas>
+    <canvas id="pie" width=400 height=300></canvas>
 {% endblock %}

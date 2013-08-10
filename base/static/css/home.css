@@ -87,11 +87,11 @@ canvas#article{
     display: block;
     padding: 2px;
     border: none;
-    background: #f5f5f5;
+    background: #EEE;
 }
 
 #sendMail input:active, #sendMail textarea:active{
-	background: #eee;
+	background: #DDD;
 }
 
 #sendMail input{

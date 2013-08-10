@@ -28,6 +28,14 @@ function dist(p1, p2){
     return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 }
 
+//Calculates the sum of the list given as argument
+function sum(list){
+	var acc = 0;
+	for(var i = 0; i < list.length; i++){
+		acc += list[i];
+	}
+	return acc;
+}
 
 
 // show the .overlay

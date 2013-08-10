@@ -1,6 +1,5 @@
 formulario de email -> comprobarlo in situ -> modificar el backend en produccion -> chequear el error
 
-arreglar los putos commits
 
 error handling (404, 403, 500) -> test
 estudiar la velocidad de carga
