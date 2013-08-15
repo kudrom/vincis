@@ -395,6 +395,7 @@ div[role="main"] summary{
 }
 
 div.footer{
+	clear: both;
     margin: 0;
     text-align: left;
     display: flex;

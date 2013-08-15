@@ -1,8 +1,56 @@
 .wrapper{
     margin-top : 0;
+    width: 85%;
 }
 
-.wrapper > canvas{
+article h3{
+	margin: 3px 0;
+}
+
+h3, h4{
+	font-family: "Open Sans";
+}
+
+h4 span{
+	margin-left: 5px;
+	font-size: 0.9em;
+}
+
+h4{
+	font-size: 1.2em;
+	font-weight: normal;
+}
+
+#developmentNation{
+	margin-top: 20px;
+}
+
+#developmentNation .text{
+    height: 220px;
+    text-align: left;
+    margin-top: 20px;
+}
+
+#developmentNation .title{
+    display: inline;
+    margin-bottom: 5px;
+    color: #222;
+}
+
+#developmentNation canvas{
 	display: block;
-	margin: 0 auto;
+}
+
+#developmentNation .left{
+	float: left;
+}
+
+#developmentNation .right{
+    float: right;
+}
+
+@media all and (min-width: 1200px){
+	.wrapper{
+	   width: 55%
+	}
 }

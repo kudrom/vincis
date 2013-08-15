@@ -1,8 +1,9 @@
 var articles = document.querySelectorAll("article"),
 	vincis = articles[0],
+	homeCanvases = document.querySelectorAll("#vincis > canvas"),
 	sections = document.querySelectorAll("#vincis .second li"),
 	// In order to avoid the overlap of the earlier handler in logo.js
-	oldfunction = window.onresize,
+	oldResizeFunction = window.onresize,
     i,
     lastTime = +new Date(),
     // view the call to cancelAnimationFrame in the handler for the sections
@@ -47,20 +48,6 @@ var articles = document.querySelectorAll("article"),
             clearTimeout(id);
         };
 }());
-
-
-/* Updates the heights of every article to the height of the screen 
- * or the minimum which is 620px.
- * I've to update NAV_HEIGHT because of the responsive design
- */
-function update_heights(){
-	var NAV_HEIGHT = nav.offsetHeight,
-		height = window.innerHeight > 645 ? window.innerHeight - NAV_HEIGHT : 620;
-
-	for (i = 0; i < articles.length; i++){
-		articles[i].style.height = height + "px";
-	}
-}
 
 function draw_report(){
 	var canvas = document.querySelector("canvas#report"),
@@ -380,16 +367,6 @@ function draw_tech(){
 		requestAnimationFrame(animate);
 }
 
-// From the MDC
-function get_random(min, max, print){
-	var seed = Math.random(),
-		number = Math.floor(seed * (max - min +1)) + min;
-	if(print){
-		console.log(number, seed, max);
-	}
-	return number;
-}
-
 function draw_article(){
 	var canvas = document.querySelector("canvas#article"),
 		context = canvas.getContext("2d"),
@@ -473,7 +450,7 @@ function draw_article(){
 			color = ORANGE;
 		}
 		letters.push(new Letter(color, PHRASE[i], get_random(25, 160), 
-							   get_random(0, canvas.width - 30, true), -150,
+							   get_random(0, canvas.width - 30), -150,
 							   get_random(4, 40), 1.5, Math.random() > 0.5));
 	}
 	old_update = old_time = +new Date();
@@ -504,7 +481,6 @@ function update_animation(element){
 	for(ii = 0; ii < canvas.length; ii++){
 		canvas[ii].classList.add("hidden");
 		elements[ii].classList.remove("selected");
-		//canvas[ii].getContext("2d").clearRect(0, 0, canvas[ii].width, canvas[ii].height);
 	}
 	cancelAnimationFrame(currentAnimation);
 	document.querySelector("canvas#" + name).classList.remove("hidden");
@@ -514,8 +490,8 @@ function update_animation(element){
 
 /* Setup */
 window.onresize = function(e){
-	oldfunction(e);
-    update_heights();
+	oldResizeFunction(e);
+    update_heights(610, articles);
 }
 
 /* For every section of vincis (report, tecnicality and article) at the first
@@ -529,5 +505,5 @@ for(i = 0; i < sections.length; i++){
 	});
 }
 
-update_heights();
-update_animation(document.body.querySelector(".report"));
+update_heights(600, articles);
+update_animation(document.querySelector(".report"));

@@ -1,15 +1,22 @@
 var globalEventMapping = {},
-	globalManagerMapping = {};
+	globalManagerMapping = {},
+	globalCallerMapping = {};
 
 // binds an event with the appropriate handler
-function bind(canvas, event, cobj){
+function bind(canvas, event, cobj, caller){
 	// Handle the event with the global manager to bind the proper manager to the cobj
 	canvas["on"+event] = globalEventHandler;
-	if(!(canvas.id in globalEventMapping)){
-		globalEventMapping[canvas.id] = new Object();
-		globalEventMapping[canvas.id][event] = cobj;
+	if(!(canvas.className in globalEventMapping)){
+		globalEventMapping[canvas.className] = new Object();
+		globalEventMapping[canvas.className][event] = cobj;
+
+		// Avoid the TypeError exception in the manager filling the dictionary with undefineds
+		globalCallerMapping[canvas.className] = new Object();
 	}else{
-		globalEventMapping[canvas.id][event] = cobj;
+		globalEventMapping[canvas.className][event] = cobj;
+	}
+	if(caller !== undefined){
+		globalCallerMapping[canvas.className][event] = caller;
 	}
 }
 
@@ -22,7 +29,7 @@ function bind(canvas, event, cobj){
  */
 function globalEventHandler(e){
 	var manager = globalManagerMapping[e.type],
-		cobj = globalEventMapping[this.id][e.type];
+		cobj = globalEventMapping[this.className][e.type];
 	manager.call(cobj, e, this);
 }
 
@@ -32,8 +39,11 @@ function clickHoverHandler(e, canvas){
 		context = canvas.getContext("2d"),
 		BckgCanvas = document.createElement("canvas"),
 		BckgContext = BckgCanvas.getContext("2d"),
-		i, length = this.objects.length, mouseout = true,
-		func = {"mousedown": this.click, "mousemove": this.mover,
+		i, length = this.objects.length,
+		mouseout = true,
+		caller = globalCallerMapping[canvas.className][e.type],
+		args,
+		func = {"mouseup": this.click, "mousemove": this.mover,
 				"mouseout": this.mout};
 	
 	// Iterate over the objects
@@ -42,7 +52,12 @@ function clickHoverHandler(e, canvas){
 		if(BckgContext.isPointInPath(loc.x, loc.y)){
 			// Call the handler of the object
 			canvas.style.cursor = "pointer";
-			func[e.type].call(this, this.objects[i], canvas);
+			args = [this.objects[i], canvas];
+			if(caller !== undefined){
+				args.push(caller);
+				e.stopPropagation();
+			}
+			func[e.type].apply(this, args);
 			mouseout = false;
 			break;
 		}
@@ -54,5 +69,5 @@ function clickHoverHandler(e, canvas){
 	}
 }
 // register the manager with the proper event types
-globalManagerMapping["mousedown"] = clickHoverHandler;
+globalManagerMapping["mouseup"] = clickHoverHandler;
 globalManagerMapping["mousemove"] = clickHoverHandler;

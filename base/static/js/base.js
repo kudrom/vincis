@@ -13,7 +13,6 @@ var wrapper = document.querySelector(".wrapper"),
 	BLUE = "#829FE9";
 
 // *************************** COMMON FUNCTIONS *******************************
-
 //Transforms the coordinates of the dom element into the internal canvas
 function windowToCanvas(x, y, canvas){
     var bbox = canvas.getBoundingClientRect();
@@ -37,6 +36,53 @@ function sum(list){
 	return acc;
 }
 
+// Calculates the minimum of a list
+function min(list){
+	var ret = list[0];
+	for(var i = 1; i < list.length; i++){
+		if(list[i] < ret){
+			ret = list[i];
+		}
+	}
+	return ret;
+}
+
+// Calculates the maximum of a list
+function max(list){
+	var ret = list[0];
+	for(var i = 1; i < list.length; i++){
+		if(list[i] > ret){
+			ret = list[i];
+		}
+	}
+	return ret;
+}
+
+function pretty_number(number){
+	var n = String(number),
+		ret = n.slice(-3);
+	for(var i = 3; i < n.length; i += 3){
+		ret = n.slice(-i - 3, -i) + "." + ret;
+	}
+	return ret
+}
+
+/* Updates the heights of every article to the height of the screen or the MIN_HEIGHT.
+ * I've to update NAV_HEIGHT because of the responsive design
+ */
+function update_heights(MIN_HEIGHT, articles){
+	var NAV_HEIGHT = nav ? nav.offsetHeight : 0,
+		height = window.innerHeight > MIN_HEIGHT ? window.innerHeight - NAV_HEIGHT : MIN_HEIGHT;
+
+	for (i = 0; i < articles.length; i++){
+		articles[i].style.height = height + "px";
+	}
+}
+
+//From the MDC
+function get_random(min, max){
+	return Math.floor(Math.random() * (max - min +1)) + min;;
+}
 
 // show the .overlay
 function toggleOverlay(e){

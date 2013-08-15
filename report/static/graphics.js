@@ -3,8 +3,10 @@ var // A map is composed of provinces
 		this.id = id;
 		this.name = name;
 		this.path = path;
-		// Translate the geographical coordinates to canvas x and y
-		this.get_coords = function (coords, max_min_coords){
+
+		// Translate the geographical coordinates to canvas x and y.
+		// max_min_coords is a global variable defined in the controller
+		this.get_coords = function (coords){
 			min_lat = max_min_coords.min_lat;
 			total_lat = max_min_coords.total_lat;
 			min_lon = max_min_coords.min_lon;
@@ -16,12 +18,13 @@ var // A map is composed of provinces
 			        y: HEIGHT - (((coords[1] - min_lon) / total_lon) * HEIGHT)
 			}
 		};
+		// Used by the events.js API and draw
 		this.build_path = function(context){
 			context.beginPath();
 			for(i = 0; i < path.length; i++){
 				length = path[i].length;
 				for(ii = 0; ii < length; ii++){
-					coords = this.get_coords(path[i][ii], max_min_coords);
+					coords = this.get_coords(path[i][ii]);
 					if(ii === 0){
 						context.moveTo(coords.x, coords.y);
 					}else{
@@ -31,7 +34,7 @@ var // A map is composed of provinces
 				context.closePath();
 			}
 		}
-		this.draw = function(canvas, max_min_coords, fill, stroke){
+		this.draw = function(canvas, fill, stroke){
 			var context = canvas.getContext("2d"),
 				position,
 				i, ii;
@@ -55,7 +58,7 @@ var // A map is composed of provinces
 		}
 	},
 	// Constructor for a map
-	Map = function(json_provinces, max_min_coords, draw){
+	Map = function(json_provinces, max_min_coords){
 		// the objects array is named like this to enable the events interface
 		var objects = [],
 			province;
@@ -65,20 +68,25 @@ var // A map is composed of provinces
 			objects.push(new Province(province.id, province.name, province.coordinates))
 		}
 		this.objects = objects;
-		this.max_min_coords = max_min_coords;
 		this.old_object = null;
-		// Assign it to the argument or to a default function
-		this.draw = draw != undefined ? draw : function(canvas){
+
+		this.draw = function(canvas, colors){
 			var length = this.objects.length;
+			canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
 			for(var i = 0; i < length; i++){
-				this.objects[i].draw(canvas, this.max_min_coords, ORANGE, "white");
+				if(colors[i] === "#ffffff"){
+					this.objects[i].erase(canvas);
+				}else{
+					this.objects[i].draw(canvas, colors[i], "white");
+				}
 			}
 		};
+		
 		this.mover = function(province, canvas){
 			if(this.old_object !== province){
 				province.erase(canvas);
 				if(this.old_object !== null){
-					this.old_object.draw(canvas, this.max_min_coords, ORANGE, "white");
+					this.old_object.draw(canvas, "#AAA", "white");
 				}
 				this.old_object = province;
 			}
@@ -86,7 +94,7 @@ var // A map is composed of provinces
 		
 		this.mout = function(province, canvas){
 			if(this.old_object !== null){
-				this.old_object.draw(canvas, this.max_min_coords, ORANGE, "white");
+				this.old_object.draw(canvas, "#AAA", "white");
 			}
 		}
 	},
@@ -126,10 +134,10 @@ var // A map is composed of provinces
 			seats_aux = [[],[],[]];
 		
 		// size of the canvas (it's necessary for the translation of the coords)
-		this.width = width === undefined ? 470 : width;
-		this.height = height === undefined ? 350 : height;
+		this.width = width === undefined ? 400 : width;
+		this.height = height === undefined ? 250 : height;
 		// size of each seat
-		this.size = size_seat === undefined ? 5 : size_seat;
+		this.size = size_seat === undefined ? 4 : size_seat;
 		// radius for the current ring, the 18 multiplier is empirical
 		this.radius = 18 * this.size;
 		// array of seats ordered by line (not ring)
@@ -137,10 +145,12 @@ var // A map is composed of provinces
 		// seats per party
 		this.seatsxparty = [];
 		this.old_object = null;
+		// Is a seat selected?
+		this.selected = false;
 		
 		this.translate_coords = function(x, y){
 			var x1, y1;
-			y1 = (this.height - this.size * 20) - y;
+			y1 = (this.height - this.size * 15) - y;
 			x1 = this.width/2 - x;
 			return [x1, y1];
 		};
@@ -212,15 +222,23 @@ var // A map is composed of provinces
 		// Draw the congress
 		this.draw = function(canvas, results){
 			var context = canvas.getContext("2d"),
-				current = 0;
+				current = 0,
+				keys = Object.keys(results),
+				key,
+				ii = 0;
 			
+			this.seatsxparty = [];
 			context.clearRect(0, 0, canvas.width, canvas.height);
 			// Stores in seatsxparty when starts and finish the seats of a party
-			for(var i = 0; i < results.length; i++){
-				this.seatsxparty.push({color: results[i].color,
-									   range: [current, current += results[i].n],
-									   seats: results[i].n});
-				this.paint_party(this.seatsxparty[i], context, true);
+			for(var i = 0; i < keys.length; i++){
+				key = keys[i];
+				if(results[key].hasOwnProperty("n")){
+					this.seatsxparty.push({color: results[key].color,
+										   range: [current, current += results[key].n],
+										   seats: results[key].n});
+					this.paint_party(this.seatsxparty[ii], context, true);
+					ii++;
+				}
 			}
 		}
 		
@@ -250,6 +268,7 @@ var // A map is composed of provinces
 			for(var i = 0; i < this.seatsxparty.length; i++){
 				if(this.seatsxparty[i].color !== color){
 					col = tinycolor.lighten(this.seatsxparty[i].color);
+					col = tinycolor.lighten(col);
 					col = tinycolor.lighten(col).toHexString();
 					this.paint_party(this.seatsxparty[i], context, false, col);
 				}else{
@@ -289,18 +308,26 @@ var // A map is composed of provinces
 		
 		this.mover = function(seat, canvas){
 			var context = canvas.getContext("2d");
-			if(this.old_object !== seat){
+			if(this.old_object !== seat.color){
 				this.select_party(seat.color, context);
-				this.old_object = seat;
+				this.old_object = seat.color;
+				this.selected = false;
 			}
 		}
 		
 		this.mout = function(seat, canvas){
 			var context = canvas.getContext("2d");
-			this.old_object = null;
-			context.clearRect(0, 0, canvas.width, canvas.height);
-			for(var i = 0; i < this.seatsxparty.length; i++){
-				this.paint_party(this.seatsxparty[i], context, true);
+			if(!this.selected){
+				this.old_object = null;
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				for(var i = 0; i < this.seatsxparty.length; i++){
+					this.paint_party(this.seatsxparty[i], context, true);
+				}
 			}
+		}
+		
+		this.click = function(seat, canvas, func){
+			this.selected = !this.selected;
+			func(seat);
 		}
 	};
