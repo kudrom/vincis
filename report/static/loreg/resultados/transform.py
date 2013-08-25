@@ -32,20 +32,21 @@ colors = {
     
     "EAJ-PNV": "#1E813C",
     "PNV": "#1E813C",
-    "AMAIUR": "#004B6A",
+    "AMAIUR": "#1C5268",
     "EA": "#8343A0",
     "EA-EUE": "#8343A0",
     "GBAI": "#707070",
     "Na-Bai": "#707070",
+    "NA-Bai": "#707070",
     "HB": "#5B5B5B",
     "EE": "#00BB02",
     "EE-IE": "#00BB02",
     
-    "CC-NC-PNC": "#2B01A8",
-    "CC-PNC": "#2B01A8",
-    "CC": "#2B01A8",
-    "AIC": "#2B01A8",
-    "UPC": "#2B01A8",
+    "CC-NC-PNC": "#3F1DA5",
+    "CC-PNC": "#3F1DA5",
+    "CC": "#3F1DA5",
+    "AIC": "#3F1DA5",
+    "UPC": "#3F1DA5",
     
     "COMPROMIS-Q": "#F26D21",
     
@@ -53,6 +54,7 @@ colors = {
     "PAR": "#AD484A",
     "CAIC": "#B5B5B5",
     "PA": "#383838",
+    "CA": "#383838",
     "PSA-PA": "#D132CB",
     "UV": "#2B70AD",
     "UPN": "#66D6D4",
@@ -64,6 +66,7 @@ colors = {
     
 }
 census = 0
+pcensus = []
 valid = 0
 if len(sys.argv) == 2:
     year = sys.argv[1]
@@ -76,7 +79,9 @@ if len(sys.argv) == 2:
             if row[3] == "Censo":
                 censo = int(row[4])
                 if row[0] == "":
-                    census = int(row[4])
+                    census = censo
+                elif row[1] != "":
+                    pcensus.append(censo)
             # National results
             elif row[0] == "":
                 if row[3] == "V&aacute;lidos":
@@ -98,9 +103,7 @@ if len(sys.argv) == 2:
                         final[partido] = {"v": v / censo, "n": n, "pv": [0]*52, 
                                           "pn": [0]*52, "color": colors[partido]}
                         acc += v
-                        print(v, acc)
                     else:
-                        print(acc, valid, censo)
                         final["Sin representacion"] = {"v": (valid - acc) / censo, "color": "#42EFFF", "pv": [0]*52}
             # Provincial results, exclude the autonomical
             elif row[1] != "":
@@ -129,7 +132,7 @@ if len(sys.argv) == 2:
                 else:
                     final["Sin representacion"]["pv"][id] = (valid2 - acc) / censo
     final_ord = OrderedDict(sorted(final.items(), key=lambda x: x[1]["n"] if "n" in x[1].keys() else 2000))
-    final_ord["census"] = census
+    final_ord["census"] = {"total" :census, "provinces": pcensus}
     final_ord["valid"] = valid
     with open("{}.json".format(year), "w") as jsonfile:
         json.dump(final_ord, jsonfile, indent=4)

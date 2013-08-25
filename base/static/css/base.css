@@ -13,6 +13,22 @@
     color: white;
 }
 
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+.clearfix {
+    display: inline-block;
+}
+
+bold{
+	font-weight: bold;
+}
 
 body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, 
 code, del, dfn, em, img, q, s, samp, small, strike, strong, sub, sup, tt, var, 

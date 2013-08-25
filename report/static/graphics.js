@@ -69,9 +69,14 @@ var // A map is composed of provinces
 		}
 		this.objects = objects;
 		this.old_object = null;
+		this.colors;
+		this.clicked = false;
 
-		this.draw = function(canvas, colors){
+		this.draw = function(canvas, colors, overwrite_colors){
 			var length = this.objects.length;
+			if(overwrite_colors){
+				this.colors = colors;
+			}
 			canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
 			for(var i = 0; i < length; i++){
 				if(colors[i] === "#ffffff"){
@@ -83,10 +88,13 @@ var // A map is composed of provinces
 		};
 		
 		this.mover = function(province, canvas){
+			var col;
 			if(this.old_object !== province){
-				province.erase(canvas);
+				col = tinycolor.lighten(this.colors[province.id - 1]);
+				col = tinycolor.lighten(col).toHexString();
+				province.draw(canvas, col, "white");
 				if(this.old_object !== null){
-					this.old_object.draw(canvas, "#AAA", "white");
+					this.old_object.draw(canvas, this.colors[this.old_object.id - 1], "white");
 				}
 				this.old_object = province;
 			}
@@ -94,8 +102,18 @@ var // A map is composed of provinces
 		
 		this.mout = function(province, canvas){
 			if(this.old_object !== null){
-				this.old_object.draw(canvas, "#AAA", "white");
+				this.old_object.draw(canvas, this.colors[this.old_object.id - 1], "white");
+				this.old_object = null;
 			}
+		}
+		
+		this.click = function(province, canvas, func){
+			province.draw(canvas, this.colors[province.id -1], "white");
+			func(province.id, province.name);
+		}
+		
+		this.mdown = function(province, canvas){
+			province.erase(canvas);
 		}
 	},
 	// Draw a circle
@@ -116,6 +134,8 @@ var // A map is composed of provinces
 			context.fill();
 			context.restore();
 		}
+		
+		// Debug function
 		this.drawNumber = function(number, context){
 			context.font = "8px sans-serif";
 			context.textAlign = "center";
@@ -142,11 +162,6 @@ var // A map is composed of provinces
 		this.radius = 18 * this.size;
 		// array of seats ordered by line (not ring)
 		this.objects = [];
-		// seats per party
-		this.seatsxparty = [];
-		this.old_object = null;
-		// Is a seat selected?
-		this.selected = false;
 		
 		this.translate_coords = function(x, y){
 			var x1, y1;
@@ -200,96 +215,96 @@ var // A map is composed of provinces
 			this.objects.push(new Point(this.size, this.width/2 - i * this.size * 3, this.height - this.size * 20, 0));
 		}
 		
-		this.assign_extra_50 = function(canvas){
-			var context = canvas.getContext("2d"),
-				x = this.radius,
-				y = this.size*4;
-			context.save();
-			context.fillStyle = "#EF8E51";
-			context.translate(canvas.width/2, canvas.height - this.size * 20);
-			for(var i = 0; i < 5; i++){
-				x = this.radius
-				for(var ii = 0; ii < 5; ii++){
-					x -= this.size*3;
-					this.drawPoint(x, y, context);
-					this.drawPoint(-x, y, context);
+		// Add the extra 50 seats
+		aux = [];
+		y = -this.size*4;
+		for(var i = 0; i < 3; i++){
+			x = this.radius
+			for(var ii = 0; ii < 10; ii++){
+				x -= this.size*3;
+				coords = this.translate_coords(-x, y);
+				this.objects.push(new Point(this.size, coords[0], coords[1], 351 + (i*5 + ii)));
+				coords = this.translate_coords(x, y);
+				aux.push(new Point(this.size, coords[0], coords[1], 376 + (i*5 + ii)))
+				if(i == 2 && ii >= 4){
+					break;
 				}
-				y += this.size*3;
 			}
-			context.restore();
+			y -= this.size*3;
 		}
+		aux.reverse();
+		this.objects = this.objects.concat(aux);
 		
 		// Draw the congress
-		this.draw = function(canvas, results){
+		this.draw = function(canvas, seatsxparty){
 			var context = canvas.getContext("2d"),
-				current = 0,
-				keys = Object.keys(results),
-				key,
-				ii = 0;
+				keys = Object.keys(seatsxparty),
+				color;
 			
-			this.seatsxparty = [];
 			context.clearRect(0, 0, canvas.width, canvas.height);
 			// Stores in seatsxparty when starts and finish the seats of a party
 			for(var i = 0; i < keys.length; i++){
-				key = keys[i];
-				if(results[key].hasOwnProperty("n")){
-					this.seatsxparty.push({color: results[key].color,
-										   range: [current, current += results[key].n],
-										   seats: results[key].n});
-					this.paint_party(this.seatsxparty[ii], context, true);
-					ii++;
-				}
+				color = keys[i];
+				this.paint_party(seatsxparty[color], context, true, color);
 			}
 		}
 		
-		// Paint the congress
+		// Paint a party of the congress
 		this.paint_party = function(party, context, party_color, color){
-			var current = party.range[0],
+			var current,
 				col;
 			
 			context.save();
 			col = color;
-			while(current < party.range[1]){
-				// if i use the party color, restart it in the parties array
-				if(party_color){
-					this.objects[current].color = party.color;
-					col = party.color;
+			for(var i = 0; i < party.range.length; i++){
+				current = party.range[i].start;
+				while(current < party.range[i].end){
+					// if i use the party color, reset it in the parties array
+					if(party_color){
+						this.objects[current].color = color;
+					}
+					this.objects[current].draw(context, col);
+					current++;
 				}
-				this.objects[current].draw(context, col);
-				current++;
 			}
 			context.restore();
 		}
 		
 		// fade all the parties except the selected
-		this.select_party = function(color, context){
-			var col;
+		this.select_party = function(color, context, seatsxparty){
+			var col,
+				colors = Object.keys(seatsxparty);
+
 			context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-			for(var i = 0; i < this.seatsxparty.length; i++){
-				if(this.seatsxparty[i].color !== color){
-					col = tinycolor.lighten(this.seatsxparty[i].color);
+			for(var i = 0; i < colors.length; i++){
+				if(colors[i] !== color){
+					col = tinycolor.lighten(colors[i]);
 					col = tinycolor.lighten(col);
+					col = tinycolor.lighten(col);
+					col = tinycolor.desaturate(col);
 					col = tinycolor.lighten(col).toHexString();
-					this.paint_party(this.seatsxparty[i], context, false, col);
+					this.paint_party(seatsxparty[colors[i]], context, false, col);
 				}else{
-					this.paint_party(this.seatsxparty[i], context, true);
+					this.paint_party(seatsxparty[color], context, true, color);
 				}
 			}
 		}
 		
-		// select a few seats from a party
-		this.select_number_seats = function(distribution, context){
+		// select a few seats from a party, only when the size of the congress is equal to 350
+		this.select_number_seats = function(distribution, context, seatsxparty){
 			var current,
 				limit, end, color,
-				selected;
+				selected,
+				keys = Object.keys(seatsxparty);
+			
 			context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-			for(var i = 0; i < this.seatsxparty.length; i++){
-				current = this.seatsxparty[i].range[0];
-				color = this.seatsxparty[i].color;
-				end = this.seatsxparty[i].range[1];
+			for(var i = 0; i < keys.length; i++){
+				color = keys[i];
+				current = seatsxparty[color].range[0].start;
+				end = seatsxparty[color].range[0].end;
 				for(var ii = 0; ii < distribution.length; ii++){
 					if(distribution[ii].color == color){
-						limit = distribution[ii].n + this.seatsxparty[i].range[0];
+						limit = distribution[ii].n + seatsxparty[color].range[0].start;
 						while(current < limit){
 							this.objects[current].draw(context, color);
 							current++;
@@ -298,6 +313,8 @@ var // A map is composed of provinces
 					}
 				}
 				color = tinycolor.lighten(color);
+				color = tinycolor.lighten(color);
+				color = tinycolor.desaturate(color);
 				color = tinycolor.lighten(color).toHexString();
 				while(current < end){
 					this.objects[current].draw(context, color);
@@ -305,23 +322,87 @@ var // A map is composed of provinces
 				}
 			}
 		}
+	},
+	LayerCongress = function(congress){
+		// Parties in the congress
+		this.seatsxparty;
 		
-		this.mover = function(seat, canvas){
+		this.congress = congress;
+		// API for events.js
+		this.objects = congress.objects.slice(0, 350);
+		// Old seat selected
+		this.old_object = null;
+		// Is a seat selected?
+		this.selected = false;
+		
+		
+		// Draw the congress with the results given
+		this.draw = function(canvas, results){
+			var current = 0,
+				current_50 = 350,
+				keys = Object.keys(results),
+				key,
+				color,
+				is_extra = false;
+			
+			this.seatsxparty = new Object();
+			// Stores in seatsxparty the distribution of seats around the congress
+			for(var i = 0; i < keys.length; i++){
+				key = keys[i];
+				if(results[key].hasOwnProperty("n")){
+					color = results[key].color;
+					this.seatsxparty[color] = {range: [{start: current,
+													    end: current + results[key].n}],
+											   seats: results[key].n};
+					current += results[key].n;
+					
+					// The extra property is the range for the distribution of the 50 extra seats
+					if(results[key].hasOwnProperty("extra")){
+						is_extra = true;
+						this.seatsxparty[color].range.push({start: current_50,
+															end: current_50 + results[key].extra});
+						current_50 += results[key].extra;
+					}
+				}
+			}
+			
+			// Update the objects array to allow the 50 extra seats been recognized by events.js
+			if(is_extra){
+				this.objects = congress.objects;
+			}else{
+				this.objects = congress.objects.slice(0, 350);
+			}
+			this.congress.draw(canvas, this.seatsxparty);
+		}
+		
+		// public API to select a party from the congress
+		this.select_party = function(color, context){
+			this.congress.select_party(color, context, this.seatsxparty);
+		}
+		
+		this.select_number_seats = function(dist, context){
+			this.congress.select_number_seats(dist, context, this.seatsxparty);
+		}
+		
+		this.mover = function(seat, canvas, func){
 			var context = canvas.getContext("2d");
 			if(this.old_object !== seat.color){
-				this.select_party(seat.color, context);
+				this.congress.select_party(seat.color, context, this.seatsxparty);
 				this.old_object = seat.color;
 				this.selected = false;
 			}
 		}
 		
 		this.mout = function(seat, canvas){
-			var context = canvas.getContext("2d");
+			var context = canvas.getContext("2d"),
+				keys = Object.keys(this.seatsxparty);
+
 			if(!this.selected){
 				this.old_object = null;
 				context.clearRect(0, 0, canvas.width, canvas.height);
-				for(var i = 0; i < this.seatsxparty.length; i++){
-					this.paint_party(this.seatsxparty[i], context, true);
+				for(var i = 0; i < keys.length; i++){
+					color = keys[i];
+					this.congress.paint_party(this.seatsxparty[color], context, true, color);
 				}
 			}
 		}
@@ -330,4 +411,4 @@ var // A map is composed of provinces
 			this.selected = !this.selected;
 			func(seat);
 		}
-	};
+	}
